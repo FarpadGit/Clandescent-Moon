@@ -1,0 +1,126 @@
+@import "MidnightPlayer.less";
+@import "Playlist.less";
+
+#root {
+  --playlist-height-base: 420px;
+  --playlist-height: calc(var(--playlist-height-base) + 2 * var(--border-width));
+  --playlist-width: 450px;
+  --add-item-height: 40px;
+  --border-width: 1px;
+
+  margin: 0 8rem;
+
+  @media (max-width: 1399.98px) {
+    margin: 0 4rem;
+  }
+
+  @media (max-width: 1279.98px) {
+    margin: 0 3rem;
+  }
+
+  @media (max-width: 1199.98px) {
+    margin: 0 1rem;
+  }
+
+  @media (max-width: 767.98px) {
+    margin: 0;
+  }
+}
+
+@font-face {
+  font-family: "NightDust";
+  src: url("../assets/NightDust-lgDJD.ttf");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../assets/Montserrat-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Montserrat Bold";
+  src: url("../assets/Montserrat-Bold.ttf");
+}
+
+.logo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-image: radial-gradient(ellipse at center 40%, #1d0f2f 20%, transparent 60%);
+
+  p {
+    position: relative;
+    font-size: 45pt;
+    text-align: center;
+    font-family: NightDust;
+    background-image: linear-gradient(to right, #da00ec, #222b60, transparent);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    &::before {
+      content: "Clandescent Moon";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(to right, transparent 55%, #222b6088 65%, black 80%);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(-1px -1px 0px #5798e5);
+    }
+  }
+}
+
+.main-area-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 2rem;
+  padding: 2rem 0;
+
+  @media (max-width: 1279.98px) {
+    gap: 1rem;
+    max-width: 1000px;
+  }
+
+  @media (max-width: 991.98px) {
+    gap: 0;
+  }
+}
+
+// mobile view offcanvas trigger button (checkbox)
+.btn-check {
+  & + .side-panel-btn {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% 0 0 50%;
+  z-index: 10;
+  transition: translate 0.5s ease;
+
+  --bs-btn-padding-x: var(--bs-btn-padding-y);
+}
+
+  &:checked + .side-panel-btn {
+    translate: 100% 0;
+  }
+}
+
+.offcanvas-body .playlist {
+  width: 100%;
+  height: 100vh;
+
+  --playlist-height-base: calc(100vh - 2 * 40px);
+  --playlist-height: 100%;
+  --playlist-width: 100%;
+  --add-item-height: 40px;
+  --border-width: 1px;
+}

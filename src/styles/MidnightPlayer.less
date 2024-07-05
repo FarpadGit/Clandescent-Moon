@@ -1,0 +1,263 @@
+@import "Seeker.less";
+
+.Midnight-Player-container {
+  --video-player-height: var(--playlist-height);
+  width: 640px;
+  height: var(--video-player-height);
+
+  @media (max-width: 1279.98px) {
+    width: 512px;
+  }
+
+  @media (max-width: 991.98px) {
+    --video-player-height: 374px;
+  }
+
+  .Midnight-Player {
+    --video-player-primary: #da00ec;
+    --video-player-secondary: #00b8ff;
+    --video-player-tertiary: #fe9110;
+    position: relative;
+    height: var(--video-player-height);
+    background-color: black;
+
+    /* hiding the youtube information widgets by stretching it over the iframe boundary */
+    .player-container {
+      overflow: hidden;
+      width: 100% !important;
+      height: 360px !important;
+      /* Keep it the right aspect-ratio */
+      aspect-ratio: 16/9;
+      /* No clicking/hover effects */
+      pointer-events: none;
+      border-radius: 20px 20px 0 0;
+
+      @media (max-width: 1279.98px) {
+        height: 288px !important;
+      }
+
+      iframe {
+        /* Extend it beyond the viewport... */
+        width: 500% !important;
+        height: 100% !important;
+        /* ...and bring it back again */
+        margin-left: -200%;
+      }
+    }
+
+    .control-container {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      height: var(--video-player-height);
+      justify-content: space-between;
+      z-index: 1;
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: calc(100% + 2px);
+        height: calc(100% + 2px);
+        border: 2px solid white;
+        border-radius: 20px;
+        box-shadow: 0 0 5px 5px var(--video-player-secondary), inset 0 0 5px 5px var(--video-player-secondary);
+        pointer-events: none;
+        transform: translateY(-2px);
+      }
+
+      &.paused::before {
+        background-color: rgba(0,0,0,0.5);
+      }
+
+      .top-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 5px 20px;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.1s ease-out;
+        user-select: none;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      &.paused .top-container {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .mid-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .bottom-container {
+        .time-display {
+          position: relative;
+          display: flex;
+          justify-content: space-between;
+          color: #fff;
+          font-size: 0.8rem;
+          user-select: none;
+          z-index: 1;
+        }
+
+        .visualizer {
+          position: absolute;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          transform: translateY(-100%);
+      
+          .bar {
+              width: 3px;
+              background-image: linear-gradient(to bottom, var(--video-player-secondary), var(--video-player-primary), var(--video-player-tertiary));
+              border-radius: 50px;
+              box-shadow: 0 0 0 2px black;
+              transition: height 0.3s ease;
+          }
+      }
+
+        .control-box {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px 10px 15px;
+          background-color: black;
+          overflow: hidden;
+
+          .inner-controls {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: black;
+            overflow: hidden;
+            font-size: large;
+
+            /* hides the volume slider when beneath it */
+            .volume-screen {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              background-color: black;
+              z-index: 1;
+            }
+          }
+
+          .volume-slider {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 20px;
+            color: var(--video-player-primary);
+            transform: translateX(-100%);
+            transition: transform 0.1s ease-out;
+            cursor: pointer;
+
+            &::before,
+            &::after {
+              content: "";
+              position: absolute;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: repeating-radial-gradient(circle at 5px 3px, var(--led-color) 0 1px, #0000 2px 100%);
+              background-size: 10% 75%;
+              filter: drop-shadow(0 0 1px var(--led-color));
+            }
+
+            &::before {
+              /* #bde900 */
+              --led-color: #f4d20e;
+              mask: linear-gradient(to right, #fff calc(var(--volume) - 2%), #0000 0%);
+            }
+
+            &::after {
+              --led-color: gray;
+              mask: linear-gradient(to right, #0000 calc(var(--volume) - 2%), #fff 0%);
+            }
+
+            .thumb {
+              position: absolute;
+              height: 25px;
+              width: 15px;
+              border: 1px solid var(--video-player-tertiary);
+              border-radius: 25%;
+              background-color: black;
+              touch-action: none;
+              will-change: left;
+              outline: none;
+            }
+
+            .track {
+              height: 5px;
+              border-radius: 4px;
+              will-change: left, right;
+            }
+
+            .track-0 {
+              background-image: linear-gradient(to right, var(--video-player-tertiary), var(--video-player-primary));
+            }
+
+            .track-1 {
+              background-color: gray;
+            }
+          }
+
+          .options-menu {
+            position: absolute;
+            right: 5px;
+            margin: 0;
+            padding: 0;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.75);
+            list-style: none;
+            transform: translateY(-120%);
+            font-size: small;
+            z-index: 1;
+
+            li {
+              width: 100px;
+              padding: 10px;
+              cursor: pointer;
+              user-select: none;
+              text-align: end;
+            }
+          }
+        }
+      }
+
+      .icon-btn {
+        padding: 0 10px;
+        color: var(--video-player-primary);
+        z-index: 2;
+        cursor: pointer;
+
+        &:hover {
+          color: #de73e7;
+        }
+      }
+    }
+  }
+}
+
+/* show volume slider when: hovered over button, hovered over the slider, dragged the thumb */
+.inner-controls:has(.volume-btn:hover)+.volume-slider,
+.volume-slider:hover,
+.volume-slider:has(.thumb:focus) {
+  transform: translateX(0) !important;
+}
+
+.glow {
+  filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 5px currentColor);
+}

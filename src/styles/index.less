@@ -1,0 +1,190 @@
+@import "App.less";
+
+:root {
+  --app-bg-color: #020303;
+  --app-fg-color: #A6BFBF;
+  --app-fg-faded: #354F4F;
+  --bs-body-bg: var(--app-bg-color);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  body {
+    padding-bottom: .1px;
+    background-image: url("/background.jpg");
+    background-repeat: no-repeat;
+    background-size: 2000px 900px;
+    background-position: center bottom;
+
+    @media (max-width: 991.98px) {
+      background-size: 1500px 750px;
+    }
+  }
+
+}
+
+.btn-clandescent {
+  --bs-btn-color: var(--app-fg-color);
+  --bs-btn-hover-color: var(--app-fg-color);
+  --bs-btn-active-color: var(--app-fg-color);
+  --bs-btn-bg: #1d0f2f;
+  --bs-btn-hover-bg: #1d0f2f;
+  --bs-btn-active-bg: #1d0f2f;
+  --bs-btn-border-color: #7001ff;
+  --bs-btn-hover-border-color: lighten(#7001ff, 10%);
+  --bs-btn-active-border-color: lighten(#7001ff, 10%);
+
+  &:hover {
+    border-color: var(--bs-btn-hover-border-color) !important;
+  }
+}
+
+.lang-selector {
+  position: absolute;
+  top: 5%;
+  right: 2%;
+  padding: 25px 50px;
+  z-index: 10;
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: radial-gradient(ellipse at center 50%, #1d0f2f 45%, transparent 70%);
+    z-index: -1;
+  }
+
+  button {
+    width: 115px;
+    border-radius: 5px;
+    font-size: 16pt;
+    cursor: pointer;
+  }
+
+  .dropdown-menu {
+    width: 100%;
+    font-size: 16pt;
+    --bs-dropdown-min-width: 0;
+    --bs-dropdown-color: var(--app-fg-color);
+    --bs-dropdown-bg: #1d0f2f;
+    --bs-dropdown-border-color: #7001ff;
+  }
+}
+
+/* bootstrap style overrides */
+.accordion {
+  --bs-accordion-btn-bg: transparent;
+  --bs-accordion-active-bg: transparent;
+  --bs-accordion-color: var(--app-fg-color);
+  --bs-accordion-bg: transparent;
+  --bs-border-width: 0;
+  --bs-accordion-btn-focus-box-shadow: 0;
+}
+
+.accordion-button {
+  justify-content: center;
+  flex-direction: column;
+
+  &::after {
+    content: none;
+  }
+}
+
+.list-group-item {
+  display: flex;
+  flex-direction: column;
+  min-height: 47px;
+  --bs-list-group-color: var(--app-fg-color);
+  --bs-list-group-active-color: var(--app-fg-color);
+  --bs-list-group-bg: transparent;
+  --bs-list-group-active-bg: transparent;
+  --bs-list-group-border-color: transparent;
+  --bs-list-group-active-border-color: transparent;
+  /* --bs-list-group-border-color: var(--border-color) */
+  /* --bs-list-group-active-border-color: : var(--border-color) */
+}
+
+.btn-playlist-option {
+  width: 100%;
+  --bs-btn-border-width: 1px;
+  --bs-btn-border-color: var(--button-border-color);
+  --bs-btn-bg: transparent;
+  --bs-btn-color: var(--app-fg-color);
+
+  --bs-btn-hover-border-color: var(--button-border-color);
+  --bs-btn-hover-bg: transparent;
+  --bs-btn-hover-color: var(--app-fg-color);
+
+  --bs-btn-active-border-color: var(--active-color-1);
+  --bs-btn-active-bg: transparent;
+  --bs-btn-active-color: var(--app-fg-color);
+}
+
+.options-settings:nth-of-type(2n) .btn-playlist-option {
+  --bs-btn-active-border-color: var(--active-color-2);
+}
+
+.dropdown-menu {
+  --bs-dropdown-bg: var(--background-color);
+  --bs-dropdown-border-color: var(--button-border-color);
+  --bs-dropdown-link-color: var(--app-fg-color);
+}
+
+.spinner-border {
+  translate: 0 25%;
+}
+
+.offcanvas.offcanvas-toggling.show {
+  --bs-offcanvas-transition: transform 0.3s ease-in-out 250ms;
+}
+
+.offcanvas-body {
+  padding: 0;
+}
+
+/* truncated long text that overflows into ellipses... */
+.text-truncate {
+  line-height: 1.75rem;
+}
+
+/* long text alternating left and right like a marquee */
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+
+  & > span {
+    display: inline-block;
+    animation: marquee-1 var(--marquee-duration) linear infinite alternate;
+
+    & > span {
+      animation: marquee-2 var(--marquee-duration) linear infinite alternate;
+    }
+  }
+}
+
+@keyframes marquee-1 {
+  0% {
+    margin-left: 0;
+  }
+
+  100% {
+    margin-left: 100%;
+  }
+}
+
+@keyframes marquee-2 {
+  0% {
+    margin-left: 0;
+  }
+
+  100% {
+    margin-left: -100%;
+  }
+}

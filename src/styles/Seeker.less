@@ -1,0 +1,93 @@
+/* Seeker slider */
+.seeker-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .seeker {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 20px;
+        margin-bottom: -10px;
+        color: var(--video-player-primary);
+        cursor: pointer;
+
+        .thumb {
+            opacity: 0;
+            height: 20px;
+            width: 20px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            background-image: radial-gradient(var(--video-player-tertiary), var(--video-player-primary));
+            will-change: left;
+            outline: none;
+            box-shadow: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        .track {
+            height: 1px;
+            border-radius: 0px;
+            will-change: left, right;
+            transition: height 0.2s ease;
+        }
+        
+        .track-0 {
+            background-image: linear-gradient(to right, var(--video-player-tertiary), var(--video-player-primary));
+            box-shadow: 0 0 9px 3px currentColor;
+        }
+        
+        .track-1 {
+            background-color: gray;
+            z-index: -1;
+        }
+
+        &:hover {
+            .thumb {
+                opacity: 1;
+                box-shadow: 0 0 9px 3px currentColor;
+            }
+
+            .track {
+                height: 5px;
+                border-radius: 4px;
+                will-change: left, right;
+            }
+        }
+    }
+
+    .seeker-tooltip {
+        position: fixed;
+        display: flex;
+        left: var(--x);
+        top: var(--y);
+        transform: translate(-50%, -100%);
+        background-color: rgba(0, 0, 0, 0.75);
+        text-shadow: 0 0 5px currentColor;
+        padding: 5px;
+        border-radius: 10px;
+        color: white;
+        user-select: none;
+        z-index: 10;
+    }
+
+    .visualizer {
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        /* height: 110px; */
+        transform: translateY(-50%);
+    
+        .bar {
+            width: 3px;
+            background-image: linear-gradient(to bottom, var(--video-player-secondary), var(--video-player-primary), var(--video-player-tertiary));
+            border-radius: 50px;
+            box-shadow: 0 0 0 2px black;
+            transition: height 0.3s ease;
+        }
+    }
+}

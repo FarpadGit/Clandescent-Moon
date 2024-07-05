@@ -1,0 +1,92 @@
+ svg.playButton {
+    display: block;
+    height: 100%;
+
+    #triangle {
+        stroke: white;
+        fill: var(--background-color);
+        transition: fill 0.5s ease;
+    }
+
+    &:hover #triangle,
+    &.active #triangle {
+        fill: white;
+    }
+
+    .lineOne,
+    .lineTwo {
+        transform-origin: 50% 50%;
+        transition: stroke 1s ease, transform 1s ease;
+        stroke: var(--button-border-color);
+    }
+    
+    #coverCircle {
+        fill: var(--background-color);
+    }
+
+    &:not(.active):hover {
+        .lineOne {
+            scale: 0.75 0.75;
+            transform: rotate(260deg);
+            -webkit-transform: rotate(260deg);
+            -moz-transform: rotate(260deg);
+            -o-transform: rotate(260deg);
+            stroke: var(--active-color-1);
+        }
+
+        .lineTwo {
+            transform: rotate(-450deg);
+            -webkit-transform: rotate(-450deg);
+            -moz-transform: rotate(-450deg);
+            -o-transform: rotate(-450deg);
+            stroke: var(--active-color-2);
+        }
+    }
+
+    &.active {
+        .lineOne {
+            stroke: var(--active-color-1);
+            fill: var(--active-color-1);
+            animation: spinning 5s linear infinite;
+        }
+
+        .lineTwo {
+            stroke: var(--active-color-2);
+            fill: var(--active-color-2);
+            animation: spinning 5.5s linear infinite;
+        }
+
+        #coverCircle {
+            fill-opacity: 1;
+        }
+
+        .fragment {
+            stroke-opacity: 1;
+        }
+    }
+}
+
+
+@keyframes spinning {
+    0% {
+        rotate: 0;
+        transform-origin: 50% 47.5%;
+    }
+
+    25% {
+        transform-origin: 52.5% 50%;
+    }
+
+    50% {
+        transform-origin: 47.5% 52.5%;
+    }
+
+    75% {
+        transform-origin: 47.5% 50%;
+    }
+
+    100% {
+        rotate: 1080deg;
+        transform-origin: 50% 47.5%;
+    }
+}
