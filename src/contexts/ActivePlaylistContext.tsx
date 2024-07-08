@@ -67,7 +67,7 @@ export default ({ children }: { children: ReactNode }) => {
   async function getVideoTitle(url: string): Promise<string> {
     try {
       const title = await fetch(
-        `http://noembed.com/embed?url=${encodeURIComponent(url)}`
+        `https://noembed.com/embed?url=${encodeURIComponent(url)}`
       )
         .then((res) => res.json())
         .then((res) => res.title);
