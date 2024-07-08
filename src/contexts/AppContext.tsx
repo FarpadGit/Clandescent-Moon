@@ -4,6 +4,8 @@ import ActivePlaylistContext from "./ActivePlaylistContext";
 import UserActionsContext from "./UserActionsContext";
 import VideoPlayerContext from "./VideoPlayerContext";
 
+export const LSRootKey = "Clandescent Moon playlists";
+
 export type ListItemType = { id: string; text: string; url?: string };
 
 export const playModes = ["linear", "shuffle", "random"] as const;

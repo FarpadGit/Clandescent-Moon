@@ -32,20 +32,17 @@ export default function VerticalList({
   const itemAdded = useRef(false);
 
   useEffect(() => {
+    setIsLoading(false);
     if (!itemAdded.current) return;
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
     itemAdded.current = false;
-  }, [itemAdded.current]);
-
-  useEffect(() => {
-    setIsLoading(false);
   }, [activeList]);
 
   function addNewItem() {
     if (!itemToAdd) return;
     setIsLoading(true);
-    setItemToAdd("");
     onUserAction("", "add", itemToAdd);
+    setItemToAdd("");
     itemAdded.current = true;
   }
 

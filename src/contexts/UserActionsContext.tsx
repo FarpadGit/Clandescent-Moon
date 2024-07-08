@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext } from "react";
-import { useAppContext } from "../contexts/AppContext";
+import { LSRootKey, useAppContext } from "../contexts/AppContext";
 import { usePlaylistsContext } from "../contexts/PlaylistsContext";
 import { useActivePlaylistContext } from "../contexts/ActivePlaylistContext";
 import Papa from "papaparse";
@@ -230,7 +230,7 @@ export default ({ children }: { children: ReactNode }) => {
 
   function exportAllToFile() {
     // reads index of playlists from Local Storage
-    const LSPlaylists = localStorage.getItem("playlists");
+    const LSPlaylists = localStorage.getItem(LSRootKey);
     if (!LSPlaylists) return;
     const playlistNames = JSON.parse(LSPlaylists || "") as string[];
 
@@ -269,7 +269,7 @@ export default ({ children }: { children: ReactNode }) => {
       new Blob([CSVPlaylists], {
         type: "text/plain;charset=utf-8",
       }),
-      "My Playlists.csv"
+      "My Clandescent Moon Playlists.csv"
     );
   }
 

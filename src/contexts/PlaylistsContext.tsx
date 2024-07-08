@@ -6,7 +6,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { ListItemType } from "./AppContext";
+import { ListItemType, LSRootKey } from "./AppContext";
 import Papa from "papaparse";
 import { nanoid } from "nanoid";
 
@@ -34,7 +34,7 @@ export default ({ children }: { children: ReactNode }) => {
   const isNewlyLoaded = useRef(true);
 
   useEffect(() => {
-    const LSPlaylists = localStorage.getItem("playlists");
+    const LSPlaylists = localStorage.getItem(LSRootKey);
     if (!LSPlaylists) return;
     const playlistArray = JSON.parse(LSPlaylists) as string[];
     const playlistsWithId = playlistArray.map((plName) => {
@@ -50,7 +50,7 @@ export default ({ children }: { children: ReactNode }) => {
 
   function writePlaylistsToLocalStorage() {
     localStorage.setItem(
-      "playlists",
+      LSRootKey,
       JSON.stringify(playlists.map((pl) => pl.text))
     );
   }
