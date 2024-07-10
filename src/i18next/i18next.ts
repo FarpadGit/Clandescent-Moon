@@ -169,7 +169,7 @@ i18n.use(initReactI18next).init({
           ERROR: "Hiba történt",
           autosave: {
             title: "Auto mentés",
-            description: `Ha <strong>BE</strong> van kapcsolva van akkor minden lejátszási listán végzett változás autómatikusan elmentésre kerül a Helyi Tárolóba (Local Storage). 
+            description: `Ha <strong>BE</strong> van kapcsolva akkor minden lejátszási listán végzett változás autómatikusan elmentésre kerül a Helyi Tárolóba (Local Storage). 
             Akkor kapcsold <strong>KI</strong>, ha csak valami ideiglenes változást szeretnél csinálni amit vissza lehet állítani.`,
           },
           playback: {
