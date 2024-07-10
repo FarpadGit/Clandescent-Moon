@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { userActions } from "../../contexts/UserActionsContext";
+import { useVideoPlayerContext } from "../../contexts/VideoPlayerContext";
 import {
   PiCaretCircleDoubleDownBold,
   PiCaretCircleDoubleUpBold,
   PiXCircleBold,
 } from "react-icons/pi";
 import { FiEdit3, FiCheckSquare } from "react-icons/fi";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 type ListItemProps = {
   text: string;
-  subtext?: string;
+  subtext: string | false;
   textOnEdit: string;
   isFirst: boolean;
   isLast: boolean;
@@ -20,7 +21,7 @@ type ListItemProps = {
 };
 export default function ListItem({
   text,
-  subtext,
+  subtext = false,
   textOnEdit,
   isFirst,
   isLast,
@@ -30,6 +31,7 @@ export default function ListItem({
 }: ListItemProps) {
   const [editedText, setEditedText] = useState(textOnEdit);
   const [isEditMode, setIsEditMode] = useState(false);
+  const { t } = useTranslation();
 
   function onEdit() {
     if (isEditMode) onUserAction("edit", editedText);
@@ -88,7 +90,11 @@ export default function ListItem({
       <div className="list-item-controls">
         {/* Edit button */}
         <Button className="playlist-button" click={() => onEdit()}>
-          {isEditMode ? <FiCheckSquare /> : <FiEdit3 />}
+          {isEditMode ? (
+            <FiCheckSquare alignmentBaseline="central" />
+          ) : (
+            <FiEdit3 alignmentBaseline="central" />
+          )}
         </Button>
         {/* Move-up button */}
         <Button
@@ -96,7 +102,7 @@ export default function ListItem({
           click={() => onUserAction("move-up")}
           disabled={isEditMode || isFirst}
         >
-          <PiCaretCircleDoubleUpBold />
+          <PiCaretCircleDoubleUpBold alignmentBaseline="central" />
         </Button>
         {/* Play button */}
         <PlayButton active={isActive} />
@@ -106,15 +112,15 @@ export default function ListItem({
           click={() => onUserAction("move-down")}
           disabled={isEditMode || isLast}
         >
-          <PiCaretCircleDoubleDownBold />
+          <PiCaretCircleDoubleDownBold alignmentBaseline="central" />
         </Button>
         {/* Delete Button */}
         <Button
-          className="playlist-button"
+          className="playlist-button border-danger"
           click={() => onUserAction("delete")}
           disabled={isEditMode}
         >
-          <PiXCircleBold />
+          <PiXCircleBold alignmentBaseline="central" />
         </Button>
       </div>
     </>
@@ -140,9 +146,15 @@ function Button({ children, click, ...props }: UnpropagatedButtonProps) {
 }
 
 function PlayButton({ active = false }: { active?: boolean }) {
+  const { videoState } = useVideoPlayerContext();
+  function buttonStateClass() {
+    if (!active) return "";
+    if (!videoState.playing) return "active paused";
+    return "active";
+  }
   return (
     <svg
-      className={`playButton ${active ? "active" : ""}`}
+      className={`playButton ${buttonStateClass()}`}
       viewBox="0 0 163 163"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
@@ -188,6 +200,12 @@ function PlayButton({ active = false }: { active?: boolean }) {
             d="m107.37 74.4-38.7-30.2c-3.7-2.9-9.2-0.3-9.2 4.5v60.3c0 4.7 5.4 7.4 9.2 4.5l38.7-30.2c2.9-2.2 2.9-6.7 0-8.9z"
             stroke="#a3cd3a"
             strokeWidth="10"
+          />
+          <path
+            id="pauseBars"
+            d="m70.5 50c-0.19854-5.0846-9-4.8-9 0v60c0 4.7 9 4.6075 9 0v-60zm31 0c-0.19854-5.0846-9-4.8-9 0v60c0 4.7 9 4.6075 9 0v-60z"
+            stroke="#a3cd3a"
+            strokeWidth="5"
           />
         </g>
       </g>

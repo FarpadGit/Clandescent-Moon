@@ -31,7 +31,7 @@ export default function VideoPlayer() {
             ref={videoPlayer}
             className="player-container"
             url={currentlyPlaying.url}
-            loop={activePlaylist?.videos.length === 1}
+            loop={videoState.onLoop || activePlaylist?.videos.length === 1}
             playing={videoState.playing}
             volume={videoState.volume}
             muted={videoState.muted}

@@ -12,6 +12,9 @@ export const playModes = ["linear", "shuffle", "random"] as const;
 export type PlayMode = (typeof playModes)[number];
 
 type contextValueType = {
+  LSError: boolean;
+  setError: () => void;
+  clearError: () => void;
   selectedTabIndex: number;
   changeToTab: (index: number) => void;
   isAutosaveOn: boolean;
@@ -26,6 +29,7 @@ const appContext = createContext({} as contextValueType);
 export const useAppContext = () => useContext(appContext);
 
 export default ({ children }: { children: ReactNode }) => {
+  const [LSError, setLSError] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [autosave, setAutosave] = useState(true);
   const [autocorrect, setAutocorrect] = useState(true);
@@ -46,6 +50,9 @@ export default ({ children }: { children: ReactNode }) => {
   return (
     <appContext.Provider
       value={{
+        LSError,
+        setError: () => setLSError(true),
+        clearError: () => setLSError(false),
         selectedTabIndex,
         changeToTab,
         isAutosaveOn: autosave,
@@ -59,9 +66,9 @@ export default ({ children }: { children: ReactNode }) => {
       <ActivePlaylistContext>
         <PlaylistsContext>
           <ActivePlaylistContext>
-            <UserActionsContext>
-              <VideoPlayerContext>{children}</VideoPlayerContext>
-            </UserActionsContext>
+            <VideoPlayerContext>
+              <UserActionsContext>{children}</UserActionsContext>
+            </VideoPlayerContext>
           </ActivePlaylistContext>
         </PlaylistsContext>
       </ActivePlaylistContext>

@@ -13,6 +13,12 @@
         fill: white;
     }
 
+    #pauseBars {
+        opacity: 0;
+        stroke: white;
+        fill: white;
+    }
+
     .lineOne,
     .lineTwo {
         transform-origin: 50% 50%;
@@ -62,6 +68,24 @@
 
         .fragment {
             stroke-opacity: 1;
+        }
+    }
+
+    &.paused {
+        #triangle {
+            opacity: 0;
+        }
+
+        #pauseBars {
+            opacity: 1;
+        }
+
+        .lineOne {
+            animation-play-state: paused;
+        }
+
+        .lineTwo {
+            animation-play-state: paused;
         }
     }
 }

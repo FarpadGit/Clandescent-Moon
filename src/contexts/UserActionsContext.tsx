@@ -2,6 +2,7 @@ import { ReactNode, createContext, useContext } from "react";
 import { LSRootKey, useAppContext } from "../contexts/AppContext";
 import { usePlaylistsContext } from "../contexts/PlaylistsContext";
 import { useActivePlaylistContext } from "../contexts/ActivePlaylistContext";
+import { useVideoPlayerContext } from "../contexts/VideoPlayerContext";
 import Papa from "papaparse";
 import FileSaver from "file-saver";
 
@@ -33,12 +34,13 @@ const userActionsContext = createContext({} as contextValueType);
 export const useUserActionsContext = () => useContext(userActionsContext);
 
 export default ({ children }: { children: ReactNode }) => {
-  const { changeToTab, isAutocorrectOn } = useAppContext();
+  const { LSError, clearError, changeToTab, isAutocorrectOn } = useAppContext();
   const {
     selectedPlaylist,
     loadedPlaylist,
     selectPlaylist,
     startPlaylist,
+    clearPlaylists,
     addNewPlaylist,
     editPlaylist,
     deletePlaylist,
@@ -58,6 +60,7 @@ export default ({ children }: { children: ReactNode }) => {
     deleteVideo,
     swapVideos,
   } = useActivePlaylistContext();
+  const { videoState, playPause } = useVideoPlayerContext();
 
   function handleUserActions(
     listType: ListType,
@@ -102,6 +105,10 @@ export default ({ children }: { children: ReactNode }) => {
         break;
       case "add":
         {
+          if (LSError) {
+            clearPlaylists();
+            clearError();
+          }
           if (payload) addNewPlaylist(payload);
         }
         break;
@@ -139,6 +146,9 @@ export default ({ children }: { children: ReactNode }) => {
       case "play":
         {
           playVideo(id);
+          if (!videoState.playing) {
+            playPause();
+          }
         }
         break;
       case "move-up":

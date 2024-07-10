@@ -222,16 +222,22 @@
             color: white;
             background-color: rgba(0, 0, 0, 0.75);
             list-style: none;
-            transform: translateY(-120%);
+            transform: translateY(-100%);
             font-size: small;
             z-index: 1;
 
             li {
+              display: grid;
+              grid-template-columns: 20px 1fr;
+              justify-items: center;
               width: 100px;
               padding: 10px;
               cursor: pointer;
               user-select: none;
-              text-align: end;
+
+              span:nth-child(2) {
+                justify-self: end;
+              }
             }
           }
         }

@@ -65,6 +65,10 @@
         }
 
         /* List view for Playlists and Videos tabs */
+        .playlist-panel:not(:has(.list-group-item)) {
+            padding: 0 30px;
+        }
+
         .playlist-panel {
             width: var(--playlist-width);
             height: var(--playlist-height-base);
@@ -82,7 +86,7 @@
                 /* Edit input */
                 input {
                     width: 100%;
-                    height: 2.25rem;
+                    height: 1.75rem;
                 }
 
                 /* Control buttons for selected item */
@@ -99,7 +103,7 @@
 
                     .playlist-button:first-child,
                     .playlist-button:last-child {
-                        scale: 0.9 0.9;
+                        scale: 0.8 0.8;
                     }
                     
                     .playButton {

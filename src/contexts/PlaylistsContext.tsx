@@ -6,7 +6,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { ListItemType, LSRootKey } from "./AppContext";
+import { ListItemType, LSRootKey, useAppContext } from "./AppContext";
 import Papa from "papaparse";
 import { nanoid } from "nanoid";
 
@@ -17,6 +17,7 @@ type contextValueType = {
   getPlaylistSize: (id: string) => number;
   selectPlaylist: (id: string) => void;
   startPlaylist: (id: string) => void;
+  clearPlaylists: () => void;
   addNewPlaylist: (name: string) => void;
   editPlaylist: (id: string, newName: string) => void;
   deletePlaylist: (id: string) => void;
@@ -33,14 +34,20 @@ export default ({ children }: { children: ReactNode }) => {
 
   const isNewlyLoaded = useRef(true);
 
+  const { setError } = useAppContext();
+
   useEffect(() => {
     const LSPlaylists = localStorage.getItem(LSRootKey);
     if (!LSPlaylists) return;
-    const playlistArray = JSON.parse(LSPlaylists) as string[];
-    const playlistsWithId = playlistArray.map((plName) => {
-      return { id: nanoid(), text: plName };
-    });
-    setPlaylists(playlistsWithId);
+    try {
+      const playlistArray = JSON.parse(LSPlaylists) as string[];
+      const playlistsWithId = playlistArray.map((plName) => {
+        return { id: nanoid(), text: plName };
+      });
+      setPlaylists(playlistsWithId);
+    } catch (error) {
+      setError();
+    }
   }, []);
 
   useEffect(() => {
@@ -61,6 +68,10 @@ export default ({ children }: { children: ReactNode }) => {
 
   function startPlaylist(id: string) {
     setLoadedPlaylistId(id);
+  }
+
+  function clearPlaylists() {
+    setPlaylists((_) => []);
   }
 
   function addNewPlaylist(name: string) {
@@ -127,6 +138,7 @@ export default ({ children }: { children: ReactNode }) => {
     getPlaylistSize,
     selectPlaylist,
     startPlaylist,
+    clearPlaylists,
     addNewPlaylist,
     editPlaylist,
     deletePlaylist,

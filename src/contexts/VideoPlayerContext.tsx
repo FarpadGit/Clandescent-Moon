@@ -18,6 +18,7 @@ type videoStateType = {
   seeking: boolean;
   buffer: boolean;
   visualizerOn: boolean;
+  onLoop: boolean;
 };
 
 type contextValueType = {
@@ -37,6 +38,7 @@ type contextValueType = {
   handleBufferEnd: () => void;
   formatTime: (time: number) => string;
   toggleVisualizer: () => void;
+  toggleLoop: () => void;
 };
 
 const videoPlayerContext = createContext({} as contextValueType);
@@ -52,8 +54,9 @@ export default ({ children }: { children: ReactNode }) => {
     volume: 0.75,
     playedFraction: 0,
     seeking: false,
-    buffer: false,
+    buffer: true,
     visualizerOn: true,
+    onLoop: false,
   });
   const seekerFidelity = 1000;
 
@@ -69,7 +72,8 @@ export default ({ children }: { children: ReactNode }) => {
         playing: true,
         playedFraction: 0,
         seeking: false,
-        buffer: false,
+        buffer: true,
+        onLoop: false,
       };
     });
   }
@@ -134,6 +138,10 @@ export default ({ children }: { children: ReactNode }) => {
     setVideoState({ ...videoState, visualizerOn: !videoState.visualizerOn });
   }
 
+  function toggleLoop() {
+    setVideoState({ ...videoState, onLoop: !videoState.onLoop });
+  }
+
   const formatTime = (time: number) => {
     if (isNaN(time)) return "00:00";
     const date = new Date(time * 1000);
@@ -163,6 +171,7 @@ export default ({ children }: { children: ReactNode }) => {
         handleBufferEnd,
         formatTime,
         toggleVisualizer,
+        toggleLoop,
       }}
     >
       {children}

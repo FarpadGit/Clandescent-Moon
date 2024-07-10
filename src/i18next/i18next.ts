@@ -46,6 +46,10 @@ i18n.use(initReactI18next).init({
         playlistsTab: "Playlists",
         videosTab: "Videos",
         settingsTab: "⚙️",
+        emptyList:
+          "This list is currently empty. Try adding some new items to it.",
+        loadError:
+          "An error occured while trying to read your playlists from Local Storage. Create a new list to reset old data or try fixing it manually.",
         playlists: {
           counter: "videos",
         },
@@ -148,6 +152,9 @@ i18n.use(initReactI18next).init({
         playlistsTab: "Lejátszási listák",
         videosTab: "Videók",
         settingsTab: "⚙️",
+        emptyList: "Ez a lista jelenleg üres. Próbálj hozzáadni valamit.",
+        loadError:
+          "Hiba történt a listáid Helyi Tárolóból való kiolvasása közben. Hozz létre egy új listát hogy lenullázzuk a régi adatokat vagy próbáld meg manuálisan kijavítani.",
         playlists: {
           counter: "videó",
         },

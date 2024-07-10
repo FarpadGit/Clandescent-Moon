@@ -108,7 +108,7 @@ export default function Controls() {
 
 function Settings() {
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { videoState, toggleVisualizer } = useVideoPlayerContext();
+  const { videoState, toggleVisualizer, toggleLoop } = useVideoPlayerContext();
   return (
     <>
       <div
@@ -120,7 +120,11 @@ function Settings() {
       {settingsOpen && (
         <ul className="options-menu">
           <li onClick={() => toggleVisualizer()}>
-            {videoState.visualizerOn && "✓"} Visualizer
+            <span>{videoState.visualizerOn && "✓"}</span>{" "}
+            <span>Visualizer</span>
+          </li>
+          <li onClick={() => toggleLoop()}>
+            <span>{videoState.onLoop && "✓"}</span> <span>Loop</span>
           </li>
         </ul>
       )}

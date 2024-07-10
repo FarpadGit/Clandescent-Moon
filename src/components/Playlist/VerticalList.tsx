@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ListItemType } from "../../contexts/AppContext";
+import { ListItemType, useAppContext } from "../../contexts/AppContext";
 import { usePlaylistsContext } from "../../contexts/PlaylistsContext";
 import { userActions } from "../../contexts/UserActionsContext";
 import ListItem from "./ListItem";
@@ -9,7 +9,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { FiPlus } from "react-icons/fi";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 
 type VerticalListProps = {
   activeList: ListItemType[];
@@ -25,11 +25,13 @@ export default function VerticalList({
   selectedIndex,
   onUserAction,
 }: VerticalListProps) {
+  const { LSError } = useAppContext();
   const { getPlaylistSize } = usePlaylistsContext();
   const [itemToAdd, setItemToAdd] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const itemAdded = useRef(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setIsLoading(false);
@@ -69,9 +71,10 @@ export default function VerticalList({
       </div>
       {/* Bootstrap vertical list */}
       <BS_ListGroup className="playlist-panel rounded-0" ref={listRef}>
-        {activeList.length === 0 &&
-          "This list is currently empty. Try adding some new items."}
-        {activeList.length > 0 &&
+        {LSError && t("loadError")}
+        {!LSError && activeList.length === 0 && t("emptyList")}
+        {!LSError &&
+          activeList.length > 0 &&
           activeList.map((item, index) => (
             <BS_ListGroupItem
               key={item.id + "_" + item.text}
@@ -87,9 +90,8 @@ export default function VerticalList({
               <ListItem
                 text={item.text}
                 subtext={
-                  subtexts
-                    ? getPlaylistSize(item.id) + " " + t("playlists.counter")
-                    : undefined
+                  subtexts &&
+                  getPlaylistSize(item.id) + " " + t("playlists.counter")
                 }
                 textOnEdit={item.url ?? item.text}
                 isFirst={index === 0}
