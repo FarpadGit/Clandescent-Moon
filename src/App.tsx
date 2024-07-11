@@ -12,6 +12,7 @@ import { Trans, useTranslation } from "react-i18next";
 function App() {
   const [isDescOpen, setIsDescOpen] = useState(false);
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+  const [sidePanelTouchStart, setSidePanelTouchStart] = useState(0);
   const { t } = useTranslation();
   const screenWidth = useMediaQuery();
 
@@ -69,7 +70,15 @@ function App() {
                 onHide={() => setIsSidePanelOpen(false)}
                 placement="end"
               >
-                <Offcanvas.Body>
+                <Offcanvas.Body
+                  onTouchStart={(e) =>
+                    setSidePanelTouchStart(e.touches[0].clientX)
+                  }
+                  onTouchMove={(e) => {
+                    if (e.touches[0].clientX - sidePanelTouchStart > 100)
+                      setIsSidePanelOpen(false);
+                  }}
+                >
                   <Playlist />
                 </Offcanvas.Body>
               </Offcanvas>

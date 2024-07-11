@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useActivePlaylistContext } from "../../contexts/ActivePlaylistContext";
 import { useVideoPlayerContext } from "../../contexts/VideoPlayerContext";
+import useMediaQuery from "../../hooks/useMediaQuery";
 import Visualizer from "./Visualizer";
 import { SeekBar } from "./SeekBar";
 import {
@@ -26,14 +27,19 @@ export default function Controls() {
     formatTime,
   } = useVideoPlayerContext();
   const { currentlyPlaying } = useActivePlaylistContext();
+  const [volumeTouched, setVolumeTouched] = useState(false);
+
   const currentTime = videoPlayer.current?.getCurrentTime() ?? 0;
   const duration = videoPlayer.current?.getDuration() ?? 0;
 
   const formatedCurrentTime = formatTime(currentTime);
   const formatedDuration = formatTime(duration);
 
+  const screenWidth = useMediaQuery();
+
   return (
     <div className={`control-container ${!videoState.playing ? "paused" : ""}`}>
+      {/* Top Container (Video Title)*/}
       <div className="top-container">
         <a
           className="text-truncate pb-1 fs-2 text-white text-decoration-none"
@@ -45,11 +51,13 @@ export default function Controls() {
           {currentlyPlaying.text}
         </a>
       </div>
+      {/* Middle Container (Play Button) */}
       <div className="mid-container" onClick={() => playPause()}>
         <div className="icon-btn glow">
           {!videoState.playing && <PiPlay fontSize="xxx-large" />}
         </div>
       </div>
+      {/* Bottom Container */}
       <div className="bottom-container">
         <div className="px-3">
           <div className="time-display glow">
@@ -59,6 +67,7 @@ export default function Controls() {
           <Visualizer />
           <SeekBar duration={duration} />
         </div>
+        {/* Control Buttons */}
         <div
           className="control-box"
           style={
@@ -72,16 +81,26 @@ export default function Controls() {
           <div className="d-flex align-items-center">
             <div className="inner-controls">
               <div className="volume-screen" />
+              {/* Rewind Button */}
               <div className="icon-btn" onClick={() => rewind()}>
                 <PiRewindBold />
               </div>
+              {/* Play Button */}
               <div className="icon-btn" onClick={() => playPause()}>
                 {videoState.playing ? <PiPauseBold /> : <PiPlayBold />}
               </div>
+              {/* Fast Forward Button */}
               <div className="icon-btn" onClick={() => fastForward()}>
                 <PiFastForwardBold />
               </div>
-              <div className="icon-btn volume-btn" onClick={() => mute()}>
+              {/* Volume Button */}
+              <div
+                className="icon-btn volume-btn"
+                onClick={() => screenWidth.LG && mute()}
+                onTouchStart={() =>
+                  volumeTouched ? mute() : setVolumeTouched(true)
+                }
+              >
                 {videoState.muted || videoState.volume === 0 ? (
                   <FiVolumeX />
                 ) : videoState.volume < 0.5 ? (
@@ -91,10 +110,11 @@ export default function Controls() {
                 )}
               </div>
             </div>
+            {/* Volume Slider */}
             <ReactSlider
               min={0}
               max={100}
-              className="volume-slider"
+              className={`volume-slider ${volumeTouched ? "touched" : ""}`}
               onChange={(value: number) => changeVolume(value)}
               value={videoState.muted ? 0 : videoState.volume * 100}
             />

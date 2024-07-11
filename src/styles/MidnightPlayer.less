@@ -257,9 +257,10 @@
   }
 }
 
-/* show volume slider when: hovered over button, hovered over the slider, dragged the thumb */
+/* show volume slider when: hovered over button, touched on mobile, hovered over the slider, dragged the thumb */
 .inner-controls:has(.volume-btn:hover)+.volume-slider,
 .volume-slider:hover,
+.volume-slider.touched,
 .volume-slider:has(.thumb:focus) {
   transform: translateX(0) !important;
 }
