@@ -14,6 +14,7 @@ import {
 } from "react-icons/pi";
 import { FiVolumeX, FiVolume1, FiVolume2 } from "react-icons/fi";
 import ReactSlider from "react-slider";
+import { useTranslation } from "react-i18next";
 
 export default function Controls() {
   const {
@@ -35,6 +36,7 @@ export default function Controls() {
   const formatedCurrentTime = formatTime(currentTime);
   const formatedDuration = formatTime(duration);
 
+  const { t } = useTranslation();
   const screenWidth = useMediaQuery();
 
   return (
@@ -48,7 +50,7 @@ export default function Controls() {
           target="_blank"
           rel="noreferrer"
         >
-          {currentlyPlaying.text}
+          {t(currentlyPlaying.text) ?? currentlyPlaying.text}
         </a>
       </div>
       {/* Middle Container (Play Button) */}
