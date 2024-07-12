@@ -189,26 +189,34 @@ export default ({ children }: { children: ReactNode }) => {
   async function handleNewURL(url: string) {
     // if url is a Youtube playlist
     if (url.includes("youtube.com") && url.includes("list=")) {
-      const playlistId = new URL(url).searchParams.get("list");
-      let pageTokenParam = "";
-      const APIKeyParam = `&key=${import.meta.env["VITE_YOUTUBE_API_KEY"]}`;
+      try {
+        const playlistId = new URL(url).searchParams.get("list");
+        let pageTokenParam = "";
+        const APIKeyParam = `&key=${import.meta.env["VITE_YOUTUBE_API_KEY"]}`;
 
-      // YT playlists are paginated (max 50 items per page is the limit) and must be fetched in chucks. the next page token is returned in the results
-      do {
-        const YTResponse = await fetch(
-          `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageTokenParam}${APIKeyParam}`
-        ).then((res) => res.json());
+        // YT playlists are paginated (max 50 items per page is the limit) and must be fetched in chucks. the next page token is returned in the results
+        do {
+          const YTResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageTokenParam}${APIKeyParam}`
+          ).then((res) => res.json());
 
-        const urls: string[] = YTResponse.items.map(
-          (item: any) => item.snippet.resourceId.videoId
-        );
-        pageTokenParam = YTResponse.nextPageToken
-          ? "&pageToken=" + YTResponse.nextPageToken
-          : "";
-        urls.forEach((url) =>
-          addNewVideo("https://www.youtube.com/watch?v=" + url)
-        );
-      } while (pageTokenParam !== "");
+          const urls: string[] = YTResponse.items.map(
+            (item: any) => item.snippet.resourceId.videoId
+          );
+          pageTokenParam = YTResponse.nextPageToken
+            ? "&pageToken=" + YTResponse.nextPageToken
+            : "";
+          urls.forEach((url) =>
+            addNewVideo("https://www.youtube.com/watch?v=" + url)
+          );
+        } while (pageTokenParam !== "");
+      } catch (error) {
+        // remove the "list" search parameter from the URL and add it to the list.
+        // if this results in an unplayable item then it will tell the user something went wrong.
+        const _url = new URL(url);
+        _url.searchParams.delete("list");
+        addNewVideo(_url.toString());
+      }
       // if not a Youtube playlist
     } else {
       let _url = url;
