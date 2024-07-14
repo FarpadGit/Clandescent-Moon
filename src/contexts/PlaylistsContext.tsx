@@ -116,7 +116,8 @@ export default ({ children }: { children: ReactNode }) => {
     const plName = playlists.find((pl) => pl.id === id)?.text;
     if (!plName) return 0;
     const LSPlaylist = localStorage.getItem(plName);
-    const CSVPlaylist = Papa.parse<string>(LSPlaylist!).data.flat();
+    if (LSPlaylist == null) return 0;
+    const CSVPlaylist = Papa.parse<string>(LSPlaylist).data.flat();
     return CSVPlaylist.length;
   }
 
