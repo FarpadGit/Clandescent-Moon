@@ -28,13 +28,13 @@ const playlistsContext = createContext({} as contextValueType);
 export const usePlaylistsContext = () => useContext(playlistsContext);
 
 export default ({ children }: { children: ReactNode }) => {
+  const { setError, isAutosaveOn } = useAppContext();
+
   const [playlists, setPlaylists] = useState<ListItemType[]>([]);
   const [loadedPlaylistId, setLoadedPlaylistId] = useState("");
   const [selectedPlaylistId, setSelectedPlaylistId] = useState("");
 
   const isNewlyLoaded = useRef(true);
-
-  const { setError } = useAppContext();
 
   useEffect(() => {
     const LSPlaylists = localStorage.getItem(LSRootKey);
@@ -51,7 +51,7 @@ export default ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (!isNewlyLoaded.current) writePlaylistsToLocalStorage();
+    if (isAutosaveOn && !isNewlyLoaded.current) writePlaylistsToLocalStorage();
     isNewlyLoaded.current = false;
   }, [playlists]);
 
