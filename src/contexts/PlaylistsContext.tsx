@@ -51,15 +51,12 @@ export default ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (isAutosaveOn && !isNewlyLoaded.current) writePlaylistsToLocalStorage();
+    if (!isNewlyLoaded.current) writePlaylistsToLocalStorage();
     isNewlyLoaded.current = false;
   }, [playlists]);
 
   function writePlaylistsToLocalStorage() {
-    localStorage.setItem(
-      LSRootKey,
-      JSON.stringify(playlists.map((pl) => pl.text))
-    );
+    addToLS(LSRootKey, JSON.stringify(playlists.map((pl) => pl.text)));
   }
 
   function selectPlaylist(id: string) {
@@ -77,7 +74,7 @@ export default ({ children }: { children: ReactNode }) => {
   function addNewPlaylist(name: string) {
     if (playlists.findIndex((pl) => pl.text === name) > -1) return;
     setPlaylists((prev) => [...prev, { id: nanoid(), text: name }]);
-    localStorage.setItem(name, "");
+    addToLS(name, "");
   }
 
   function editPlaylist(id: string, newName: string) {
@@ -87,15 +84,15 @@ export default ({ children }: { children: ReactNode }) => {
     const oldName = playlists.find((pl) => pl.id === id)?.text || "";
     const LSPlaylist = localStorage.getItem(oldName);
     if (LSPlaylist !== null) {
-      localStorage.removeItem(oldName);
-      localStorage.setItem(newName, LSPlaylist);
+      removeFromLS(oldName);
+      addToLS(newName, LSPlaylist);
     }
     setPlaylists(newPlaylists);
   }
 
   function deletePlaylist(id: string) {
     const plName = playlists.find((pl) => pl.id === id)?.text;
-    if (plName) localStorage.removeItem(plName);
+    if (plName) removeFromLS(plName);
     const newPlaylists = playlists.filter((pl) => pl.id !== id);
     setPlaylists(newPlaylists);
   }
@@ -121,6 +118,14 @@ export default ({ children }: { children: ReactNode }) => {
     const LSPlaylist = localStorage.getItem(plName);
     const CSVPlaylist = Papa.parse<string>(LSPlaylist!).data.flat();
     return CSVPlaylist.length;
+  }
+
+  function addToLS(key: string, value: string) {
+    if (isAutosaveOn) localStorage.setItem(key, value);
+  }
+
+  function removeFromLS(key: string) {
+    if (isAutosaveOn) localStorage.removeItem(key);
   }
 
   const returnValue = {
