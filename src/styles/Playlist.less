@@ -7,8 +7,8 @@
     --active-color-2: #fe9110;
     --active-gradient: linear-gradient(to right, var(--active-color-1), var(--active-color-2));
     --background-color: #1d0f2f;
-    --button-border-color: #7001ff;
-    border: var(--border-width) solid #5e5164;
+    --border-color: #7001ff;
+    border: var(--border-width) solid var(--border-color);
     border-radius: 20px;
     background-color: var(--background-color);
     overflow: hidden;
@@ -49,10 +49,16 @@
             padding: 5px 10px 7px;
 
             input {
+                border: 1px inset var(--app-fg-color);
                 border-radius: 10px;
                 padding-left: 5px;
                 background-color: var(--app-bg-color);
                 color: var(--app-fg-color);
+                
+                &:focus-visible {
+                    border-color: var(--border-color);
+                    outline: none;
+                }
             }
         }
 
@@ -92,10 +98,11 @@
                 /* Control buttons for selected item */
                 .list-item-controls {
                     display: none;
-                    justify-content: space-evenly;
+                    justify-content: center;
                     margin-top: 0.3rem;
                     height: 40px;
                     user-select: none;
+                    gap: 1rem;
 
                     button:disabled {
                         color: var(--app-fg-faded);
@@ -121,6 +128,15 @@
                     .list-item-controls {
                         display: flex;
                     }
+
+                    .list-item-text {
+                        min-width: 0.25rem;
+                        transition: min-width 0.5s ease-out;
+                    }
+
+                    &:last-child {
+                        margin-bottom: 7px;
+                    }
                 }
 
                 &.active {
@@ -133,9 +149,16 @@
                     }
                 }
 
+                // transitioning min-width from 100% to near 0 on selection will let the parent div justify shorter texts to center
+                // while letting long texts overflow and play the marquee animation.
+                // The downside is that transitioning back looks 'delayed' because a min-width between 0 and [content-width] makes no difference visally,
+                // while a forward transition going from 100% to 99% is immediately visible, it will move the text inward. The longer the text the more delayed it looks.
+                // ...So I just sped it up on the way back.
                 .list-item-text {
+                    position: relative;
                     user-select: none;
-                    line-height: 1.75rem;
+                    min-width: 100%;
+                    transition: min-width 0.25s ease-out;
                 }
             }
         }
@@ -172,7 +195,7 @@
         align-items: center;
         justify-content: center;
         height: 100%;
-        border-color: var(--button-border-color);
+        border-color: var(--border-color);
         border-radius: 50%;
         aspect-ratio: 1/1;
         background-color: var(--background-color);

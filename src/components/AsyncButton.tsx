@@ -67,7 +67,7 @@ function Done() {
     <span className="d-flex justify-content-center gap-2">
       {t("options.DONE")}
       <span>
-        <Checkmark size="1.5rem" color="var(--button-border-color)" />
+        <Checkmark size="1.5rem" color="var(--border-color)" />
       </span>
     </span>
   );

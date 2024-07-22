@@ -63,14 +63,18 @@ export default function VerticalList({
           }}
         />
         {isLoading && (
-          <Spinner size="sm" style={{ color: "var(--button-border-color)" }} />
+          <Spinner size="sm" style={{ color: "var(--border-color)" }} />
         )}
         <button className="playlist-button" onClick={() => addNewItem()}>
           <FiPlus />
         </button>
       </div>
       {/* Bootstrap vertical list */}
-      <BS_ListGroup className="playlist-panel rounded-0" ref={listRef}>
+      <BS_ListGroup
+        className="playlist-panel rounded-0"
+        onClick={() => onUserAction("-1", "select")}
+        ref={listRef}
+      >
         {LSError && t("loadError")}
         {!LSError && activeList.length === 0 && t("emptyList")}
         {!LSError &&
@@ -82,7 +86,8 @@ export default function VerticalList({
                 index === selectedIndex ? "selected" : ""
               }`}
               active={index === activeIndex}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (index === selectedIndex) onUserAction(item.id, "play");
                 else onUserAction(item.id, "select");
               }}

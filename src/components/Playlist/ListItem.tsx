@@ -51,14 +51,14 @@ export default function ListItem({
     <>
       {!isEditMode && (
         <div className="d-flex flex-column">
-          <div className="d-flex">
+          <div className="d-flex justify-content-center">
             <div
               className={`list-item-text ${
                 isSelected ? "marquee" : "text-truncate"
               }`}
               style={
                 {
-                  lineHeight: subtext ? "1.5rem" : undefined,
+                  lineHeight: subtext ? "1.5rem" : "1.75rem",
                   "--marquee-duration":
                     1 + Math.max(0, text.length - 35) / 10 + "s",
                 } as React.CSSProperties
@@ -71,7 +71,11 @@ export default function ListItem({
             </div>
           </div>
           {/* if it has subtexts to show display it under main text */}
-          {subtext && <p className="fs-6 mb-0 user-select-none">{subtext}</p>}
+          {subtext && (
+            <div className="d-flex justify-content-center">
+              <span className={`fs-6 mb-0 list-item-text`}>{subtext}</span>
+            </div>
+          )}
         </div>
       )}
       {isEditMode && (
