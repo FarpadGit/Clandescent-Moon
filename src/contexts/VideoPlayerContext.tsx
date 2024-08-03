@@ -148,7 +148,7 @@ export default ({ children }: { children: ReactNode }) => {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
     const seconds = date.getUTCSeconds().toString().padStart(2, "0");
-    if (hours) return `${hours}:${minutes.toString().padStart(2, "0")} `;
+    if (hours) return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds}`;
     else return `${minutes}:${seconds}`;
   };
 
