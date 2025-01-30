@@ -9,7 +9,7 @@ import FileSaver from "file-saver";
 // reverse cors proxy required for ki.tc as it doesn't provide an Access-Control-Allow-Origin header for client side requests
 // alternatives:
 // "https://corsproxy.io/?url="
-const REVERSE_PROXY_PREFIX = "https://thingproxy.freeboard.io/fetch/";
+const REVERSE_PROXY_PREFIX = "";
 
 export type userActions =
   | "select"
