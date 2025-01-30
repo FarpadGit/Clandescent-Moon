@@ -6,6 +6,11 @@ import { useVideoPlayerContext } from "../contexts/VideoPlayerContext";
 import Papa from "papaparse";
 import FileSaver from "file-saver";
 
+// reverse cors proxy required for ki.tc as it doesn't provide an Access-Control-Allow-Origin header for client side requests
+// alternatives:
+// "https://corsproxy.io/?url="
+const REVERSE_PROXY_PREFIX = "https://thingproxy.freeboard.io/fetch/";
+
 export type userActions =
   | "select"
   | "add"
@@ -27,6 +32,9 @@ type contextValueType = {
   exportActiveToFile: () => void;
   exportAllToFile: () => void;
   importFromFile: (fileText: string) => void;
+  exportActiveToCloud: () => Promise<string | null>;
+  exportAllToCloud: () => Promise<string | null>;
+  importFromCloud: (id: string) => Promise<boolean>;
   setPlaylistToLocalStorage: (plName: string) => void;
 };
 
@@ -226,8 +234,8 @@ export default ({ children }: { children: ReactNode }) => {
     }
   }
 
-  function exportActiveToFile() {
-    if (!activePlaylist) return;
+  function formatActivePlaylistToCSV() {
+    if (!activePlaylist) return "";
     // read active playlist from Local Storage, get stored URLs. Papaparse will return them as arrays
     const LSPlaylist = localStorage.getItem(activePlaylist.name) || "";
     const urls = Papa.parse(LSPlaylist).data as string[][];
@@ -237,19 +245,13 @@ export default ({ children }: { children: ReactNode }) => {
     // convert list back to a semicolon delimited CSV text
     const CSVPlaylist = Papa.unparse(urls, { delimiter: ";" });
 
-    // save and download text file as {playlist_name}.csv
-    FileSaver.saveAs(
-      new Blob([CSVPlaylist], {
-        type: "text/plain;charset=utf-8",
-      }),
-      `${activePlaylist.name}.csv`
-    );
+    return CSVPlaylist;
   }
 
-  function exportAllToFile() {
+  function formatAllPlaylistsToCSV() {
     // reads index of playlists from Local Storage
     const LSPlaylists = localStorage.getItem(LSRootKey);
-    if (!LSPlaylists) return;
+    if (!LSPlaylists || LSPlaylists === "[]") return "";
     const playlistNames = JSON.parse(LSPlaylists || "") as string[];
 
     // for every playlist read it's contents from LS and convert the URLs to {playlist_name: url} object format
@@ -282,16 +284,10 @@ export default ({ children }: { children: ReactNode }) => {
       delimiter: ";",
     });
 
-    // save and download text file as My Playlists.csv
-    FileSaver.saveAs(
-      new Blob([CSVPlaylists], {
-        type: "text/plain;charset=utf-8",
-      }),
-      "My Clandescent Moon Playlists.csv"
-    );
+    return CSVPlaylists;
   }
 
-  function importFromFile(fileText: string) {
+  function importPlaylist(fileText: string) {
     // helper types for the Papaparse parse results with headers (T) and the reduced playlist object where results are grouped by playlist name (P)
     type T = { [key: string]: string };
     type P = { [key: string]: T[] };
@@ -329,11 +325,93 @@ export default ({ children }: { children: ReactNode }) => {
     });
   }
 
+  async function saveToCloud(playlistData: string) {
+    const reqBody = new FormData();
+    reqBody.append("file", new Blob([playlistData], { type: "text/csv" }));
+
+    const response = await fetch(
+      REVERSE_PROXY_PREFIX + "https://ki.tc/file/u/",
+      {
+        method: "POST",
+        body: reqBody,
+      }
+    )
+      .then((res) => res.json())
+      .catch(() => null);
+
+    const downloadLink: string = response?.file?.link;
+
+    if (!downloadLink) return null;
+
+    const downloadId = downloadLink.replace("https://ki.tc/f/", "");
+
+    return downloadId;
+  }
+
+  function exportActiveToFile() {
+    if (!activePlaylist) return;
+
+    const CSVPlaylist = formatActivePlaylistToCSV();
+
+    // save and download text file as [playlist_name].csv
+    FileSaver.saveAs(
+      new Blob([CSVPlaylist], {
+        type: "text/plain;charset=utf-8",
+      }),
+      `${activePlaylist.name}.csv`
+    );
+  }
+
+  function exportAllToFile() {
+    const CSVPlaylists = formatAllPlaylistsToCSV();
+    if (CSVPlaylists === "") return;
+
+    // save and download text file as My Clandescent Moon Playlists.csv
+    FileSaver.saveAs(
+      new Blob([CSVPlaylists], {
+        type: "text/plain;charset=utf-8",
+      }),
+      "My Clandescent Moon Playlists.csv"
+    );
+  }
+
+  async function exportActiveToCloud() {
+    if (!activePlaylist) return null;
+    const CSVPlaylist = formatActivePlaylistToCSV();
+    const downloadId = saveToCloud(CSVPlaylist);
+    return downloadId;
+  }
+
+  async function exportAllToCloud() {
+    const CSVPlaylists = formatAllPlaylistsToCSV();
+    const downloadId = saveToCloud(CSVPlaylists);
+    return downloadId;
+  }
+
+  async function importFromCloud(id: string) {
+    try {
+      const response = await fetch(
+        REVERSE_PROXY_PREFIX + `https://ki.tc/f/${id}`
+      ).then((res) => res.text());
+
+      // checking for {error: messsage} type responses
+      try {
+        if (JSON.parse(response).error) return false;
+      } catch (error) {}
+
+      importPlaylist(response);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
   async function setPlaylistToLocalStorage(plName: string) {
     const fileText = await fetch(`/presets/${plName}.csv`).then((res) =>
       res.text()
     );
-    importFromFile(fileText);
+    importPlaylist(fileText);
   }
 
   return (
@@ -342,7 +420,10 @@ export default ({ children }: { children: ReactNode }) => {
         handleUserActions,
         exportActiveToFile,
         exportAllToFile,
-        importFromFile,
+        importFromFile: importPlaylist,
+        exportActiveToCloud,
+        exportAllToCloud,
+        importFromCloud,
         setPlaylistToLocalStorage,
       }}
     >

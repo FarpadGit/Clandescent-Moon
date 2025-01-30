@@ -185,6 +185,23 @@
                     font-size: small;
                     text-align: justify;
                 }
+
+                input {
+                    border-color: white;
+                    border-radius: 5px;
+                    background-color: var(--app-bg-color);
+                    color: var(--app-fg-color);
+
+                    &:focus {
+                        outline: none;
+                        border-color: var(--active-color-1);
+                    }
+
+                    &:disabled {
+                        background-color: color-mix(in srgb, var(--app-bg-color) 90%, white 10%);
+                        color: var(--app-fg-faded);
+                    }
+                }
             }
         }
     }

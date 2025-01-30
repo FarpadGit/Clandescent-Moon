@@ -23,6 +23,8 @@ type contextValueType = {
   toggleAutocorrect: () => void;
   playMode: PlayMode;
   setPlayMode: (newMode: PlayMode) => void;
+  isFileUploadOn: boolean;
+  toggleFileUpload: () => void;
 };
 
 const appContext = createContext({} as contextValueType);
@@ -34,6 +36,7 @@ export default ({ children }: { children: ReactNode }) => {
   const [autosave, setAutosave] = useState(true);
   const [autocorrect, setAutocorrect] = useState(true);
   const [playMode, setPlayMode] = useState<PlayMode>("linear");
+  const [fileUpload, setFileUpload] = useState(false);
 
   function changeToTab(index: number) {
     setSelectedTabIndex(index);
@@ -45,6 +48,10 @@ export default ({ children }: { children: ReactNode }) => {
 
   function toggleAutocorrect() {
     setAutocorrect((prev) => !prev);
+  }
+
+  function toggleFileUpload() {
+    setFileUpload((prev) => !prev);
   }
 
   return (
@@ -61,6 +68,8 @@ export default ({ children }: { children: ReactNode }) => {
         toggleAutocorrect,
         playMode,
         setPlayMode: (newMode: PlayMode) => setPlayMode(newMode),
+        isFileUploadOn: fileUpload,
+        toggleFileUpload,
       }}
     >
       <ActivePlaylistContext>

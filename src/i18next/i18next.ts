@@ -62,6 +62,7 @@ i18n.use(initReactI18next).init({
           LOADING: "One moment... ",
           DONE: "Done",
           ERROR: "Failed",
+          DOWNLOADID: "Download id",
           autosave: {
             title: "Autosaving",
             description: `When turned <strong>ON</strong> every change you make to your playlists will be
@@ -93,12 +94,20 @@ i18n.use(initReactI18next).init({
           accordingly. Turn this <strong>OFF</strong> if you plan on adding a lot of
           non-youtube sources and don't want to edit them back one by one.`,
           },
+          fileupload: {
+            title: "Use OTF for temporary storage",
+            description: `When turned <strong>ON</strong> exported playlists will be temporarily saved to OTF (One Time File, a temporary file sharing storage), and imports will also be
+            downloaded from there. Useful for transferring your playlists from one device to another by persisting it to the 'cloud'. These uploads will be deleted after 27 days or after 
+            the first time they're downloaded. If turned <strong>OFF</strong> you will download/upload files locally.`,
+          },
           import: {
             title: "Import playlist from file",
             description: `Import one or more playlists from an appropriately formatted CSV file.
           The playlists' names should be included in the very first row and any
-          preexisting playlist with the same name will be overwritten after
-          import.`,
+          preexisting playlist with the same name will be overwritten after import. An example for the file format:<br/>
+            playlist1;playlist2<br/>
+            firstUrl1;firstUrl2<br/>
+            secondUrl1;secondUrl2`,
           },
           export: {
             title: {
@@ -167,6 +176,7 @@ i18n.use(initReactI18next).init({
           LOADING: "Egy pillanat... ",
           DONE: "Kész",
           ERROR: "Hiba történt",
+          DOWNLOADID: "Letöltési azonosító",
           autosave: {
             title: "Auto mentés",
             description: `Ha <strong>BE</strong> van kapcsolva akkor minden lejátszási listán végzett változás autómatikusan elmentésre kerül a Helyi Tárolóba (Local Storage). 
@@ -193,10 +203,20 @@ i18n.use(initReactI18next).init({
             hogy Youtube videók azonosítói, és ha hiányzik belőlük a 'youtube.com' rész akkor ennek megfelelően megpróbálja kijavítani őket. 
             Akkor kapcsold <strong>KI</strong>, ha sok máshonnan származó címet szeretnél hozzáadni és nem szeretnéd őket egyesével visszaszerkeszteni a felvétel után.`,
           },
+          fileupload: {
+            title: "OTF használata ideiglenes tárolásra",
+            description: `Ha <strong>BE</strong> állapotban van akkor az exportált lejátszási listákat ideiglenesen elmenti az OTF (One Time File) ideiglenes tárhelyre és az 
+            importálás is innen tölti le őket. Hasznos ha a "felhőn" keresztül át szeretnéd menteni a listáidat egyik eszközről a másikra. Ezek a feltöltések 27 nap után törlődnek az oldalról  
+            vagy az első letöltést követően. <strong>KI</strong> kapcsolt állapotban a lejátszási listáidat lokális fájlokként kell fel- és letöltened.`,
+          },
           import: {
             title: "Lejátszási lista importálása fájlból",
             description: `Tölts be egy vagy több lejátszási listát egy megfelelően formázott CSV fájlból.
-            A listák nevének szerepelnie kell az első adatsorban és betöltés után felülír minden már létező azonos nevű lejátszási listát.`,
+            A listák nevének szerepelnie kell az első adatsorban és betöltés után felülír minden már létező azonos nevű lejátszási listát.
+            Egy példa a fájl tartalmi formájára:<br/>
+            listanev1;listanev2<br/>
+            elsoUrl1;elsoUrl2<br/>
+            masodikUrl1;masodikUrl2`,
           },
           export: {
             title: {

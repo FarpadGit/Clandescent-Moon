@@ -12,7 +12,9 @@ export default function OptionsList() {
     isAutosaveOn,
     toggleAutosave,
     isAutocorrectOn,
+    isFileUploadOn,
     toggleAutocorrect,
+    toggleFileUpload,
     playMode,
     setPlayMode,
   } = useAppContext();
@@ -20,22 +22,63 @@ export default function OptionsList() {
     exportActiveToFile,
     exportAllToFile,
     importFromFile,
+    exportActiveToCloud,
+    exportAllToCloud,
+    importFromCloud,
     setPlaylistToLocalStorage,
   } = useUserActionsContext();
   const importFileInputRef = useRef<HTMLInputElement>(null);
+  const [fileUploadSlug, setFileUploadSlug] = useState<string>("");
   const [importLoading, setImportLoading] = useState<boolean | null>(false);
+  const [exportActiveLoading, setExportActiveLoading] = useState<
+    boolean | null
+  >(false);
+  const [exportAllLoading, setExportAllLoading] = useState<boolean | null>(
+    false
+  );
   const { t } = useTranslation();
 
   async function handleImport(file: File | undefined) {
-    if (!file || !file.name.endsWith(".csv")) return;
+    if (!isFileUploadOn && (!file || !file.name.endsWith(".csv"))) return;
     try {
       setImportLoading(true);
+      if (isFileUploadOn) {
+        const success = await importFromCloud(fileUploadSlug);
+        if (!success) throw new Error();
+      }
       // read text file
-      await file.text().then((fileText) => importFromFile(fileText));
+      else await file!.text().then((fileText) => importFromFile(fileText));
       setImportLoading(false);
     } catch (error) {
       console.error(error);
       setImportLoading(null);
+    }
+  }
+
+  async function handleExport(mode: "active" | "all") {
+    try {
+      if (mode === "active") {
+        setExportActiveLoading(true);
+        if (isFileUploadOn) {
+          const downloadId = await exportActiveToCloud();
+          setFileUploadSlug(downloadId ?? t("options.ERROR"));
+          if (!downloadId) throw new Error();
+        } else exportActiveToFile();
+        setExportActiveLoading(false);
+      }
+      if (mode === "all") {
+        setExportAllLoading(true);
+        if (isFileUploadOn) {
+          const downloadId = await exportAllToCloud();
+          setFileUploadSlug(downloadId ?? t("options.ERROR"));
+          if (!downloadId) throw new Error();
+        } else exportAllToFile();
+        setExportAllLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
+      if (mode === "active") setExportActiveLoading(null);
+      if (mode === "all") setExportAllLoading(null);
     }
   }
 
@@ -96,23 +139,55 @@ export default function OptionsList() {
 
       <Option>
         <Option.Lead>
-          <AsyncButton
+          <b>{t("options.fileupload.title")}:</b>
+          <Button
             variant="playlist-option"
-            loading={importLoading}
-            onClick={() => {
-              importFileInputRef?.current?.click();
-            }}
+            onClick={() => toggleFileUpload()}
+            style={{ width: "60px" }}
           >
-            {t("options.import.title")}
-          </AsyncButton>
-          <input
-            type="file"
-            accept=".csv"
-            onChange={(e) => handleImport(e.target.files?.[0])}
-            onAbort={() => setImportLoading(false)}
-            ref={importFileInputRef}
-            style={{ display: "none" }}
-          />
+            {isFileUploadOn ? t("options.ON") : t("options.OFF")}
+          </Button>
+        </Option.Lead>
+        <Option.Description>
+          {t("options.fileupload.description")}
+        </Option.Description>
+      </Option>
+
+      <Option>
+        <Option.Lead>
+          <Option.LeadGroup>
+            <AsyncButton
+              variant="playlist-option"
+              loading={importLoading}
+              onClick={() => {
+                if (isFileUploadOn) handleImport(undefined);
+                else importFileInputRef?.current?.click();
+              }}
+            >
+              {t("options.import.title")}
+            </AsyncButton>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={(e) => handleImport(e.target.files?.[0])}
+              onAbort={() => setImportLoading(false)}
+              ref={importFileInputRef}
+              style={{ display: "none" }}
+            />
+          </Option.LeadGroup>
+          {isFileUploadOn && (
+            <Option.LeadGroup>
+              <div className="d-flex w-100 justify-content-center align-items-center gap-2">
+                <span>{t("options.DOWNLOADID")}: </span>
+                <input
+                  type="text"
+                  value={fileUploadSlug}
+                  onChange={(e) => setFileUploadSlug(e.target.value)}
+                  disabled={!isFileUploadOn}
+                />
+              </div>
+            </Option.LeadGroup>
+          )}
         </Option.Lead>
         <Option.Description>
           {t("options.import.description")}
@@ -121,15 +196,29 @@ export default function OptionsList() {
 
       <Option>
         <Option.Lead>
-          <Button variant="playlist-option" onClick={() => exportAllToFile()}>
-            {t("options.export.title.all")}
-          </Button>
-          <Button
-            variant="playlist-option"
-            onClick={() => exportActiveToFile()}
-          >
-            {t("options.export.title.current")}
-          </Button>
+          <Option.LeadGroup>
+            <AsyncButton
+              variant="playlist-option"
+              loading={exportAllLoading}
+              onClick={() => handleExport("all")}
+            >
+              {t("options.export.title.all")}
+            </AsyncButton>
+            <AsyncButton
+              variant="playlist-option"
+              loading={exportActiveLoading}
+              onClick={() => handleExport("active")}
+            >
+              {t("options.export.title.current")}
+            </AsyncButton>
+          </Option.LeadGroup>
+          {isFileUploadOn && fileUploadSlug !== "" && (
+            <Option.LeadGroup>
+              <p className="d-flex w-100 justify-content-center mb-0">
+                {t("options.DOWNLOADID")}: {fileUploadSlug}
+              </p>
+            </Option.LeadGroup>
+          )}
         </Option.Lead>
         <Option.Description>
           {t("options.export.description")}
