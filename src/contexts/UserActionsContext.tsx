@@ -5,6 +5,7 @@ import { useActivePlaylistContext } from "../contexts/ActivePlaylistContext";
 import { useVideoPlayerContext } from "../contexts/VideoPlayerContext";
 import Papa from "papaparse";
 import FileSaver from "file-saver";
+import LZString from "lz-string";
 
 // reverse cors proxy required for ki.tc as it doesn't provide an Access-Control-Allow-Origin header for client side requests
 // alternatives:
@@ -378,13 +379,15 @@ export default ({ children }: { children: ReactNode }) => {
   async function exportActiveToCloud() {
     if (!activePlaylist) return null;
     const CSVPlaylist = formatActivePlaylistToCSV();
-    const downloadId = saveToCloud(CSVPlaylist);
+    const compressedPL = LZString.compressToUTF16(CSVPlaylist);
+    const downloadId = saveToCloud(compressedPL);
     return downloadId;
   }
 
   async function exportAllToCloud() {
     const CSVPlaylists = formatAllPlaylistsToCSV();
-    const downloadId = saveToCloud(CSVPlaylists);
+    const compressedPL = LZString.compressToUTF16(CSVPlaylists);
+    const downloadId = saveToCloud(compressedPL);
     return downloadId;
   }
 
@@ -399,7 +402,9 @@ export default ({ children }: { children: ReactNode }) => {
         if (JSON.parse(response).error) return false;
       } catch (error) {}
 
-      importPlaylist(response);
+      const decompressedPL = LZString.decompressFromUTF16(response);
+
+      importPlaylist(decompressedPL);
       return true;
     } catch (error) {
       console.log(error);
