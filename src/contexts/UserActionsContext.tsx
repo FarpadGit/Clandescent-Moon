@@ -203,7 +203,7 @@ export default ({ children }: { children: ReactNode }) => {
         let pageTokenParam = "";
         const APIKeyParam = `&key=${import.meta.env["VITE_YOUTUBE_API_KEY"]}`;
 
-        // YT playlists are paginated (max 50 items per page is the limit) and must be fetched in chucks. the next page token is returned in the results
+        // YT playlists are paginated (max 50 items per page is the limit) and must be fetched in chuncks. the next page token is returned in the results
         do {
           const YTResponse = await fetch(
             `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageTokenParam}${APIKeyParam}`
@@ -220,18 +220,45 @@ export default ({ children }: { children: ReactNode }) => {
           );
         } while (pageTokenParam !== "");
       } catch (error) {
-        // remove the "list" search parameter from the URL and add it to the list.
+        // remove the "list" and all extra search parameters from the URL and add it to the list.
         // if this results in an unplayable item then it will tell the user something went wrong.
         const _url = new URL(url);
-        _url.searchParams.delete("list");
+        const keys = [..._url.searchParams.keys()];
+        for (const key of keys) {
+          if (key !== "v") _url.searchParams.delete(key);
+        }
+
         addNewVideo(_url.toString());
       }
       // if not a Youtube playlist
     } else {
-      let _url = url;
-      if (isAutocorrectOn && !url.includes(".youtube.com/"))
-        _url = "https://www.youtube.com/watch?v=" + url;
-      addNewVideo(_url);
+      let urlToAdd = url;
+
+      if (isAutocorrectOn) {
+        let youtubeCanonicalUrl = url;
+
+        if (!url.includes(".youtube.com/")) {
+          const keywords = ["watch?", "?v=", "&v="];
+          let SearchParamSubstringWithVideoId = "v=";
+
+          if (keywords.some((keyword) => url.includes(keyword))) {
+            SearchParamSubstringWithVideoId +=
+              url.split("?v=")[1] ?? url.split("&v=")[1];
+          } else if (url.startsWith("v=")) {
+            SearchParamSubstringWithVideoId += url.substring(2);
+          } else {
+            SearchParamSubstringWithVideoId += url;
+          }
+
+          youtubeCanonicalUrl =
+            "https://www.youtube.com/watch?" + SearchParamSubstringWithVideoId;
+        }
+
+        const videoId = new URL(youtubeCanonicalUrl).searchParams.get("v");
+        urlToAdd = "https://www.youtube.com/watch?v=" + videoId;
+      }
+
+      addNewVideo(urlToAdd);
     }
   }
 
