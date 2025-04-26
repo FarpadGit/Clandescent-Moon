@@ -2,21 +2,31 @@ import { MouseEvent, ReactNode, useEffect, useState } from "react";
 import { Button, ButtonProps, Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
+type onClickType =
+  | ((e: MouseEvent) => void)
+  | ((e: MouseEvent) => Promise<void>)
+  | undefined;
+
 export default function AsyncButton({
   children,
   loading: loadingProp,
+  controlled,
   ...props
-}: { children: ReactNode; loading?: boolean | null } & ButtonProps) {
+}: {
+  children: ReactNode;
+  loading?: boolean | null;
+  controlled?: true;
+} & ButtonProps) {
   const [loadingState, setLoadingState] = useState<
     "idle" | "loading" | "done" | "error"
   >("idle");
   const { onClick, ...rest } = props;
 
   async function handleClick(e: MouseEvent<HTMLButtonElement>) {
-    if (loadingProp === undefined) {
+    if (!controlled) {
       setLoadingState("loading");
       try {
-        await new Promise((res) => res(onClick?.(e)));
+        await (onClick as onClickType)?.(e);
         setLoadingState("done");
       } catch (error) {
         console.error(error);
@@ -26,9 +36,10 @@ export default function AsyncButton({
   }
 
   useEffect(() => {
-    if (loadingProp === undefined) return;
+    if (!controlled) return;
     if (loadingProp === true) setLoadingState("loading");
-    if (loadingProp === false) setLoadingState("done");
+    if (loadingProp === false && loadingState === "loading")
+      setLoadingState("done");
     if (loadingProp === null) setLoadingState("error");
   }, [loadingProp]);
 
