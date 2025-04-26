@@ -19,14 +19,14 @@ type contextValueType = {
   activePlaylist: Playlist | null;
   selectedVideo: ListItemType & { index: number };
   currentlyPlaying: ListItemType & { index: number };
-  loadPlaylist: (playlistName: string) => void;
+  loadPlaylist: (playlistName: string) => Promise<void>;
   unloadPlaylist: () => void;
-  addNewVideo: (url: string) => void;
+  addNewVideo: (url: string) => Promise<void>;
   selectVideo: (id: string) => void;
   playVideo: (id: string) => void;
   playFirstVideo: () => void;
   playNext: () => void;
-  editVideo: (id: string, newUrl: string) => void;
+  editVideo: (id: string, newUrl: string) => Promise<void>;
   deleteVideo: (id: string) => void;
   swapVideos: (index1: number, index2: number) => void;
 };
@@ -56,9 +56,7 @@ export default ({ children }: { children: ReactNode }) => {
   function writePlaylistToLocalStorage() {
     if (!activePlaylist) return;
     const newCSVPlaylist = Papa.unparse(
-      activePlaylist.videos.map((item) => {
-        return { someThrowawayHeader: item.url };
-      }),
+      activePlaylist.videos.map((item) => ({ someThrowawayHeader: item.url })),
       { header: false }
     );
     localStorage.setItem(activePlaylist.name, newCSVPlaylist);
@@ -98,7 +96,7 @@ export default ({ children }: { children: ReactNode }) => {
     setShuffledPlaylist([]);
   }
 
-  async function unloadPlaylist() {
+  function unloadPlaylist() {
     setActivePlaylist(null);
     setCurrentlyPlayingId("");
   }
@@ -106,9 +104,10 @@ export default ({ children }: { children: ReactNode }) => {
   async function addNewVideo(url: string) {
     const title = await getVideoTitle(url);
     setActivePlaylist((prev) => {
+      if (prev == null) return null;
       return {
-        name: prev!.name,
-        videos: [...prev!.videos, { id: nanoid(), url: url, text: title }],
+        name: prev.name,
+        videos: [...prev.videos, { id: nanoid(), url: url, text: title }],
       };
     });
   }
@@ -161,7 +160,7 @@ export default ({ children }: { children: ReactNode }) => {
     } else {
       //if playlist is already shuffled then proceed to play the next in line
       const index = shuffledPlaylist.findIndex(
-        (id) => id === currentlyPlayingId
+        (vidId) => vidId === currentlyPlayingId
       );
       playVideo(shuffledPlaylist[index + 1]);
     }
@@ -172,16 +171,15 @@ export default ({ children }: { children: ReactNode }) => {
     const newVideos = activePlaylist!.videos.map((vid) =>
       vid.id === id ? { id: vid.id, url: newUrl, text: title } : vid
     );
-    setActivePlaylist((prev) => {
-      return { name: prev!.name, videos: newVideos };
-    });
+    setActivePlaylist((prev) => ({ name: prev!.name, videos: newVideos }));
   }
 
   function deleteVideo(id: string) {
     const newVideos = activePlaylist!.videos.filter((vid) => vid.id !== id);
-    setActivePlaylist((prev) => {
-      return { name: prev!.name, videos: newVideos };
-    });
+    setActivePlaylist((prev) => ({ name: prev!.name, videos: newVideos }));
+
+    if (shuffledPlaylist.length > 0)
+      setShuffledPlaylist((prev) => prev.filter((vidId) => vidId !== id));
   }
 
   function swapVideos(index1: number, index2: number) {
@@ -189,9 +187,7 @@ export default ({ children }: { children: ReactNode }) => {
     let videos = activePlaylist.videos;
     [videos[index1], videos[index2]] = [videos[index2], videos[index1]];
 
-    setActivePlaylist((prev) => {
-      return { name: prev!.name, videos: videos };
-    });
+    setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
   }
 
   //this is the Durstenfeld shuffle algorithm which returns a randomly shuffled copy of the active playlist in O(n) time
