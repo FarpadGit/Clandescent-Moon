@@ -172,7 +172,9 @@ export default function OptionsList() {
                 else importFileInputRef?.current?.click();
               }}
             >
-              {t("options.import.title")}
+              {isFileUploadOn
+                ? t("options.import.title.external")
+                : t("options.import.title.local")}
             </AsyncButton>
             <input
               type="file"
@@ -211,7 +213,9 @@ export default function OptionsList() {
               loading={exportAllLoading}
               onClick={() => handleExport("all")}
             >
-              {t("options.export.title.all")}
+              {isFileUploadOn
+                ? t("options.export.title.external.all")
+                : t("options.export.title.local.all")}
             </AsyncButton>
             <AsyncButton
               variant="playlist-option"
@@ -219,7 +223,9 @@ export default function OptionsList() {
               loading={exportActiveLoading}
               onClick={() => handleExport("active")}
             >
-              {t("options.export.title.current")}
+              {isFileUploadOn
+                ? t("options.export.title.external.current")
+                : t("options.export.title.local.current")}
             </AsyncButton>
           </Option.LeadGroup>
           {isFileUploadOn && showSlug && (
