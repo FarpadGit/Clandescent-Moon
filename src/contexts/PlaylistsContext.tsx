@@ -41,9 +41,10 @@ export default ({ children }: { children: ReactNode }) => {
     if (!LSPlaylists) return;
     try {
       const playlistArray = JSON.parse(LSPlaylists) as string[];
-      const playlistsWithId = playlistArray.map((plName) => {
-        return { id: nanoid(), text: plName };
-      });
+      const playlistsWithId = playlistArray.map((playlistName) => ({
+        id: nanoid(),
+        text: playlistName,
+      }));
       setPlaylists(playlistsWithId);
     } catch (error) {
       setError();
@@ -68,7 +69,7 @@ export default ({ children }: { children: ReactNode }) => {
   }
 
   function clearPlaylists() {
-    setPlaylists((_) => []);
+    setPlaylists([]);
   }
 
   function addNewPlaylist(name: string) {
