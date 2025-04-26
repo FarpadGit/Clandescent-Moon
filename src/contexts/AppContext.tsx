@@ -1,8 +1,4 @@
 import { useContext, createContext, useState, ReactNode } from "react";
-import PlaylistsContext from "./PlaylistsContext";
-import ActivePlaylistContext from "./ActivePlaylistContext";
-import UserActionsContext from "./UserActionsContext";
-import VideoPlayerContext from "./VideoPlayerContext";
 
 export const LSRootKey = "Clandescent Moon playlists";
 
@@ -72,15 +68,7 @@ export default ({ children }: { children: ReactNode }) => {
         toggleFileUpload,
       }}
     >
-      <ActivePlaylistContext>
-        <PlaylistsContext>
-          <ActivePlaylistContext>
-            <VideoPlayerContext>
-              <UserActionsContext>{children}</UserActionsContext>
-            </VideoPlayerContext>
-          </ActivePlaylistContext>
-        </PlaylistsContext>
-      </ActivePlaylistContext>
+      {children}
     </appContext.Provider>
   );
 };

@@ -10,7 +10,15 @@ import "./styles/index.less";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AppContext>
-      <App />
+      <PlaylistsContext>
+        <ActivePlaylistContext>
+          <VideoPlayerContext>
+            <UserActionsContext>
+              <App />
+            </UserActionsContext>
+          </VideoPlayerContext>
+        </ActivePlaylistContext>
+      </PlaylistsContext>
       <LanguageSelector />
     </AppContext>
   </React.StrictMode>
