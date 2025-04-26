@@ -36,7 +36,7 @@ type contextValueType = {
   exportActiveToCloud: () => Promise<string | null>;
   exportAllToCloud: () => Promise<string | null>;
   importFromCloud: (id: string) => Promise<boolean>;
-  setPlaylistToLocalStorage: (plName: string) => void;
+  setPlaylistToLocalStorage: (plName: string) => Promise<void>;
 };
 
 const userActionsContext = createContext({} as contextValueType);
@@ -407,14 +407,14 @@ export default ({ children }: { children: ReactNode }) => {
     if (!activePlaylist) return null;
     const CSVPlaylist = formatActivePlaylistToCSV();
     const compressedPL = LZString.compressToUTF16(CSVPlaylist);
-    const downloadId = saveToCloud(compressedPL);
+    const downloadId = await saveToCloud(compressedPL);
     return downloadId;
   }
 
   async function exportAllToCloud() {
     const CSVPlaylists = formatAllPlaylistsToCSV();
     const compressedPL = LZString.compressToUTF16(CSVPlaylists);
-    const downloadId = saveToCloud(compressedPL);
+    const downloadId = await saveToCloud(compressedPL);
     return downloadId;
   }
 
