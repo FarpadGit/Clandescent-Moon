@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 
 type ListItemProps = {
   text: string;
-  subtext: string | false;
+  subtext?: string | false;
   textOnEdit: string;
   isFirst: boolean;
   isLast: boolean;
@@ -70,7 +70,7 @@ export default function ListItem({
               </span>
             </div>
           </div>
-          {/* if it has subtexts to show display it under main text */}
+          {/* if it has subtexts to show, display it under main text */}
           {subtext && (
             <div className="d-flex justify-content-center">
               <span className={`fs-6 mb-0 list-item-text`}>{subtext}</span>
