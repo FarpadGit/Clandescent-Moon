@@ -1,8 +1,8 @@
-import { useAppContext } from "../../contexts/AppContext";
-import { usePlaylistsContext } from "../../contexts/PlaylistsContext";
-import { useActivePlaylistContext } from "../../contexts/ActivePlaylistContext";
-import { useUserActionsContext } from "../../contexts/UserActionsContext";
-import VerticalList from "../Playlist/VerticalList";
+import { useAppContext } from "@/contexts/AppContext";
+import { usePlaylistsContext } from "@/contexts/PlaylistsContext";
+import { useActivePlaylistContext } from "@/contexts/ActivePlaylistContext";
+import { useUserActionsContext } from "@/contexts/UserActionsContext";
+import VerticalList from "./VerticalList";
 import OptionsList from "./OptionsList";
 import { Carousel, Tab, Tabs } from "react-bootstrap";
 import { useTranslation } from "react-i18next";

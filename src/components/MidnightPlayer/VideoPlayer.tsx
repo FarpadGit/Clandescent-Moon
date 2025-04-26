@@ -1,5 +1,5 @@
-import { useActivePlaylistContext } from "../../contexts/ActivePlaylistContext";
-import { useVideoPlayerContext } from "../../contexts/VideoPlayerContext";
+import { useActivePlaylistContext } from "@/contexts/ActivePlaylistContext";
+import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
 import Controls from "./Controls";
 import ReactPlayer from "react-player";
 

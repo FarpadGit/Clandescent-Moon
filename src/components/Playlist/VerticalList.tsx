@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { ListItemType, useAppContext } from "../../contexts/AppContext";
-import { usePlaylistsContext } from "../../contexts/PlaylistsContext";
-import { userActions } from "../../contexts/UserActionsContext";
+import { ListItemType, useAppContext } from "@/contexts/AppContext";
+import { usePlaylistsContext } from "@/contexts/PlaylistsContext";
+import { userActions } from "@/contexts/UserActionsContext";
 import ListItem from "./ListItem";
 import {
   ListGroup as BS_ListGroup,

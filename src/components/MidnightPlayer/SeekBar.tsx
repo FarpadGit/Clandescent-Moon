@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useVideoPlayerContext } from "../../contexts/VideoPlayerContext";
+import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
 import ReactSlider from "react-slider";
 
 export function SeekBar({ duration }: { duration: number }) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { userActions } from "../../contexts/UserActionsContext";
-import { useVideoPlayerContext } from "../../contexts/VideoPlayerContext";
+import { userActions } from "@/contexts/UserActionsContext";
+import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
 import {
   PiCaretCircleDoubleDownBold,
   PiCaretCircleDoubleUpBold,

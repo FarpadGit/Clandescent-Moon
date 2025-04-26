@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
-import playlists from "../../assets/presetplaylists.json";
-import { PlayMode, playModes, useAppContext } from "../../contexts/AppContext";
-import { useUserActionsContext } from "../../contexts/UserActionsContext";
+import playlists from "@/assets/presetplaylists.json";
+import { PlayMode, playModes, useAppContext } from "@/contexts/AppContext";
+import { useUserActionsContext } from "@/contexts/UserActionsContext";
 import { Option } from "./Option";
 import AsyncButton from "../AsyncButton";
 import { Button, Dropdown, DropdownButton } from "react-bootstrap";

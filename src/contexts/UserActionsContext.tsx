@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useContext } from "react";
-import { LSRootKey, useAppContext } from "../contexts/AppContext";
-import { usePlaylistsContext } from "../contexts/PlaylistsContext";
-import { useActivePlaylistContext } from "../contexts/ActivePlaylistContext";
-import { useVideoPlayerContext } from "../contexts/VideoPlayerContext";
+import { LSRootKey, useAppContext } from "./AppContext";
+import { usePlaylistsContext } from "./PlaylistsContext";
+import { useActivePlaylistContext } from "./ActivePlaylistContext";
+import { useVideoPlayerContext } from "./VideoPlayerContext";
 import Papa from "papaparse";
 import FileSaver from "file-saver";
 import LZString from "lz-string";

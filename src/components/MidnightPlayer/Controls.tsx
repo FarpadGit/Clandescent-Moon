@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useActivePlaylistContext } from "../../contexts/ActivePlaylistContext";
-import { useVideoPlayerContext } from "../../contexts/VideoPlayerContext";
-import useMediaQuery from "../../hooks/useMediaQuery";
+import { useActivePlaylistContext } from "@/contexts/ActivePlaylistContext";
+import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
+import useMediaQuery from "@/hooks/useMediaQuery";
 import Visualizer from "./Visualizer";
 import { SeekBar } from "./SeekBar";
 import {

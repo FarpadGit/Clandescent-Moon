@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useVideoPlayerContext } from "../../contexts/VideoPlayerContext";
-import { useActivePlaylistContext } from "../../contexts/ActivePlaylistContext";
+import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
+import { useActivePlaylistContext } from "@/contexts/ActivePlaylistContext";
 
 // The dancing vertical bars above the seek bar. As you probably guessed they are randomized and aren't actually in sync with the audio.
 // As far as I know embedded videos cannot be visualized using the Web Audio API, only proper audio files like mp4 and Youtube is not about to let you have those

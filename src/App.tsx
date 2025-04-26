@@ -1,7 +1,7 @@
 import { useState } from "react";
-import VideoPlayer from "./components/MidnightPlayer/VideoPlayer";
-import Playlist from "./components/Playlist/Playlist";
-import useMediaQuery from "./hooks/useMediaQuery";
+import VideoPlayer from "@/components/MidnightPlayer/VideoPlayer";
+import Playlist from "@/components/Playlist/Playlist";
+import useMediaQuery from "@/hooks/useMediaQuery";
 import Accordion from "react-bootstrap/Accordion";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { ToggleButton } from "react-bootstrap";
