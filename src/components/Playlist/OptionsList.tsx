@@ -29,6 +29,7 @@ export default function OptionsList() {
   } = useUserActionsContext();
   const importFileInputRef = useRef<HTMLInputElement>(null);
   const [fileUploadSlug, setFileUploadSlug] = useState<string>("");
+  const [showSlug, setShowSlug] = useState<boolean>(false);
   const [importLoading, setImportLoading] = useState<boolean | null>(false);
   const [exportActiveLoading, setExportActiveLoading] = useState<
     boolean | null
@@ -63,8 +64,11 @@ export default function OptionsList() {
           const downloadId = await exportActiveToCloud();
           setFileUploadSlug(downloadId ?? t("options.ERROR"));
           if (!downloadId) throw new Error();
+          setShowSlug(true);
         } else exportActiveToFile();
-        setExportActiveLoading(false);
+        setTimeout(() => {
+          setExportActiveLoading(false);
+        }, 0);
       }
       if (mode === "all") {
         setExportAllLoading(true);
@@ -72,8 +76,11 @@ export default function OptionsList() {
           const downloadId = await exportAllToCloud();
           setFileUploadSlug(downloadId ?? t("options.ERROR"));
           if (!downloadId) throw new Error();
+          setShowSlug(true);
         } else exportAllToFile();
-        setExportAllLoading(false);
+        setTimeout(() => {
+          setExportAllLoading(false);
+        }, 0);
       }
     } catch (error) {
       console.error(error);
@@ -158,6 +165,7 @@ export default function OptionsList() {
           <Option.LeadGroup>
             <AsyncButton
               variant="playlist-option"
+              controlled
               loading={importLoading}
               onClick={() => {
                 if (isFileUploadOn) handleImport(undefined);
@@ -199,6 +207,7 @@ export default function OptionsList() {
           <Option.LeadGroup>
             <AsyncButton
               variant="playlist-option"
+              controlled
               loading={exportAllLoading}
               onClick={() => handleExport("all")}
             >
@@ -206,13 +215,14 @@ export default function OptionsList() {
             </AsyncButton>
             <AsyncButton
               variant="playlist-option"
+              controlled
               loading={exportActiveLoading}
               onClick={() => handleExport("active")}
             >
               {t("options.export.title.current")}
             </AsyncButton>
           </Option.LeadGroup>
-          {isFileUploadOn && fileUploadSlug !== "" && (
+          {isFileUploadOn && showSlug && (
             <Option.LeadGroup>
               <p className="d-flex w-100 justify-content-center mb-0">
                 {t("options.DOWNLOADID")}: {fileUploadSlug}
