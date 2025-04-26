@@ -17,19 +17,19 @@ i18n.use(initReactI18next).init({
           header1: `How does this work?`,
           paragraph1: `Clandescent Moon saves your playlists directly to the browser's
               Local Storage as text data. It doesn't care who you are or what
-              cloud services do you have. You could use this site offline... if
+              cloud services do you use. You could use this site offline... if
               you could watch Youtube videos offline. Ideal for long nights of
               sitting at your desk and coding the night away :).`,
           header2: `What can I do?`,
           paragraph2: `Just add a new Playlist on the right by giving it a new name,
               click into it and on the Videos tab paste in whatever URL you want
               to add to that playlist. That's it! And if that URL just so happens to be a Youtube Playlist
-              it will even add every video from that playlist to yours.
+              it will even add every video from that playlist into yours.
               By default every change you make is automatically saved into Local Storage, so as long as
               you're using the same browser your playlists will be there as
               well. But you can also export and import playlists as CSV text
-              files if you want to transfer them somewhere else. Just look into
-              the Settings tab for more info. `,
+              files or as data uploaded to an external storage if you want to transfer them somewhere else. 
+              Just look into the Settings (⚙️) tab for more info. `,
           header3: `What videos can I play?`,
           paragraph3: `This site uses ReactPlayer as the actual underlying video player,
               which supports YouTube, Facebook, Twitch, SoundCloud, Streamable,
@@ -101,18 +101,27 @@ i18n.use(initReactI18next).init({
             the first time they're downloaded. If turned <strong>OFF</strong> you will download/upload files locally.`,
           },
           import: {
-            title: "Import playlist from file",
+            title: {
+              local: "Import playlist from file",
+              external: "Import playlist from storage",
+            },
             description: `Import one or more playlists from an appropriately formatted CSV file.
           The playlists' names should be included in the very first row and any
-          preexisting playlist with the same name will be overwritten after import. An example for the file format:<br/>
-            playlist1;playlist2<br/>
-            firstUrl1;firstUrl2<br/>
-            secondUrl1;secondUrl2`,
+          preexisting playlist with the same name will be overwritten after import. An example for the file format:<br/><br/>
+            Playlist A;Playlist B<br/>
+            firstUrlForListA;firstUrlForListB<br/>
+            secondUrlForListA;secondUrlForListB`,
           },
           export: {
             title: {
-              all: "Export all playlists to file",
-              current: "Export active playlist to file",
+              local: {
+                all: "Export all playlists to file",
+                current: "Export active playlist to file",
+              },
+              external: {
+                all: "Export all playlists to storage",
+                current: "Export active playlist to storage",
+              },
             },
             description: `Save all or just the currently playing playlist into a CSV file. The
           delimiter will be a semicolon but the import function can handle
@@ -136,18 +145,18 @@ i18n.use(initReactI18next).init({
               DailyMotion-ről vagy bármelyik másik nagyobb videómegosztó webhelyről.`,
           header1: `Hogyan is működik ez?`,
           paragraph1: `A Clandescent Moon közvetlenül a böngésző Helyi Tárolójába (Local Storage) menti le az általad készített 
-              lejátszási listákat szöveges adat formájában. Teljesen hidegen hadja, hogy ki vagy vagy melyik felhő szolgáltatásokat használod.
+              lejátszási listákat szöveges adat formájában. Teljesen hidegen hadja, hogy ki vagy vagy melyik felhő szolgáltatást használod.
               Ezt az oldalt akár offline is tudnád használni... ha tudnál offline Youtube videókat nézni. 
               Ideális hosszú, ülve töltött estékre amikor végigprogramozod az éjszakát :).`,
           header2: `Miket tudok csinálni?`,
-          paragraph2: `Csak hozz létre egy új lejátszási listát azzal, hogy a jobb oldalon adsz neki egy nevet,
+          paragraph2: `Csak hozz létre egy új lejátszási listát a jobb oldalon azzal hogy adsz neki egy nevet,
               kattints bele és a Videók fülön másold be azt az URL-t amit hozzá akarsz adni a listádhoz. 
               Ennyi az egész! Sőt, ha hagyományos azonosító helyett egy Youtube Playlist URL-jét másolod be akkor 
               ráadásként az összes benne szereplő videót hozzáadja a te listádhoz.
               Alapvetően minden változás amit a listáidon végzel automatikusan elmentődik a Helyi Tárolóba, 
               vagyis amíg ugyanezt a böngészőt használod addig a lejátszási listáid is itt lesznek. 
-              De lehetőséged van importálni vagy exportálni is listákat CSV szöveges fájlok formájában
-              ha szeretnéd máshova is áthozni őket. Nézz bele a Beállítások fülbe a részletekért. `,
+              De lehetőséged van importálni vagy exportálni is listákat CSV szöveges fájlokként vagy külső tárhelybe mentett adatként is 
+              ha szeretnéd máshova is áthozni őket. Nézz bele a Beállítások (⚙️) fülbe a részletekért. `,
           header3: `Milyen videókat tudok lejátszani?`,
           paragraph3: `Ez az oldal ReactPlayer-t használ mint a valódi mögöttes videólejátszó, 
               ami támogatja a YouTube, Facebook, Twitch, SoundCloud, Streamable,
@@ -213,10 +222,10 @@ i18n.use(initReactI18next).init({
             title: "Lejátszási lista importálása fájlból",
             description: `Tölts be egy vagy több lejátszási listát egy megfelelően formázott CSV fájlból.
             A listák nevének szerepelnie kell az első adatsorban és betöltés után felülír minden már létező azonos nevű lejátszási listát.
-            Egy példa a fájl tartalmi formájára:<br/>
-            listanev1;listanev2<br/>
-            elsoUrl1;elsoUrl2<br/>
-            masodikUrl1;masodikUrl2`,
+            Egy példa a fájl tartalmi formájára:<br/><br/>
+            lista név A;lista név B<br/>
+            elsoVideoUrlA;elsoVideoUrlB<br/>
+            masodikVideoUrlA;masodikVideoUrlB`,
           },
           export: {
             title: {
