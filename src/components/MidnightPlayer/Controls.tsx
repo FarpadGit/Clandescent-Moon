@@ -54,9 +54,15 @@ export default function Controls() {
         </a>
       </div>
       {/* Middle Container (Play Button) */}
-      <div className="mid-container" onClick={() => playPause()}>
+      <div
+        data-testid="mid-container"
+        className="mid-container"
+        onClick={() => playPause()}
+      >
         <div className="icon-btn glow">
-          {!videoState.playing && <PiPlay fontSize="xxx-large" />}
+          {!videoState.playing && (
+            <PiPlay data-testid="controls-play-large" fontSize="xxx-large" />
+          )}
         </div>
       </div>
       {/* Bottom Container */}
@@ -84,19 +90,32 @@ export default function Controls() {
             <div className="inner-controls">
               <div className="volume-screen" />
               {/* Rewind Button */}
-              <div className="icon-btn" onClick={() => rewind()}>
+              <div
+                data-testid="controls-rewind"
+                className="icon-btn"
+                onClick={() => rewind()}
+              >
                 <PiRewindBold />
               </div>
               {/* Play Button */}
-              <div className="icon-btn" onClick={() => playPause()}>
+              <div
+                data-testid="controls-play"
+                className="icon-btn"
+                onClick={() => playPause()}
+              >
                 {videoState.playing ? <PiPauseBold /> : <PiPlayBold />}
               </div>
               {/* Fast Forward Button */}
-              <div className="icon-btn" onClick={() => fastForward()}>
+              <div
+                data-testid="controls-ffwd"
+                className="icon-btn"
+                onClick={() => fastForward()}
+              >
                 <PiFastForwardBold />
               </div>
               {/* Volume Button */}
               <div
+                data-testid="controls-volume"
                 className="icon-btn volume-btn"
                 onClick={() => screenWidth.LG && mute()}
                 onTouchStart={() =>
@@ -134,6 +153,7 @@ function Settings() {
   return (
     <>
       <div
+        data-testid="controls-settings"
         className="icon-btn"
         onClick={() => setSettingsOpen((prev) => !prev)}
       >

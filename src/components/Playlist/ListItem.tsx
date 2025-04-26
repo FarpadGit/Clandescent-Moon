@@ -72,7 +72,10 @@ export default function ListItem({
           </div>
           {/* if it has subtexts to show, display it under main text */}
           {subtext && (
-            <div className="d-flex justify-content-center">
+            <div
+              data-testid="subtext"
+              className="d-flex justify-content-center"
+            >
               <span className={`fs-6 mb-0 list-item-text`}>{subtext}</span>
             </div>
           )}
@@ -93,7 +96,11 @@ export default function ListItem({
       )}
       <div className="list-item-controls">
         {/* Edit button */}
-        <Button className="playlist-button" click={() => onEdit()}>
+        <Button
+          data-testid="edit-btn"
+          className="playlist-button"
+          click={() => onEdit()}
+        >
           {isEditMode ? (
             <FiCheckSquare alignmentBaseline="central" />
           ) : (
@@ -102,6 +109,7 @@ export default function ListItem({
         </Button>
         {/* Move-up button */}
         <Button
+          data-testid="up-btn"
           className="playlist-button"
           click={() => onUserAction("move-up")}
           disabled={isEditMode || isFirst}
@@ -112,6 +120,7 @@ export default function ListItem({
         <PlayButton active={isActive} />
         {/* Move-down button */}
         <Button
+          data-testid="down-btn"
           className="playlist-button"
           click={() => onUserAction("move-down")}
           disabled={isEditMode || isLast}
@@ -120,6 +129,7 @@ export default function ListItem({
         </Button>
         {/* Delete Button */}
         <Button
+          data-testid="delete-btn"
           className="playlist-button border-danger"
           click={() => onUserAction("delete")}
           disabled={isEditMode}
@@ -158,6 +168,7 @@ function PlayButton({ active = false }: { active?: boolean }) {
   }
   return (
     <svg
+      data-testid="play-btn"
       className={`playButton ${buttonStateClass()}`}
       viewBox="0 0 163 163"
       version="1.1"

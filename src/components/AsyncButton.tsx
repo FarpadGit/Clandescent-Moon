@@ -65,7 +65,7 @@ export default function AsyncButton({
 function Loading() {
   const { t } = useTranslation();
   return (
-    <span className="d-flex justify-content-center gap-2">
+    <span data-testid="loading" className="d-flex justify-content-center gap-2">
       {t("options.LOADING")}
       <Spinner size="sm" />
     </span>
@@ -75,7 +75,7 @@ function Loading() {
 function Done() {
   const { t } = useTranslation();
   return (
-    <span className="d-flex justify-content-center gap-2">
+    <span data-testid="done" className="d-flex justify-content-center gap-2">
       {t("options.DONE")}
       <span>
         <Checkmark size="1.5rem" color="var(--border-color)" />
@@ -87,7 +87,7 @@ function Done() {
 function Error() {
   const { t } = useTranslation();
   return (
-    <span className="d-flex justify-content-center gap-2">
+    <span data-testid="error" className="d-flex justify-content-center gap-2">
       {t("options.ERROR")}
       <span>
         <Cross size="1.5rem" color="red" />
