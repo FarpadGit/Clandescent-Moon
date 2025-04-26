@@ -5,12 +5,13 @@ import { useActivePlaylistContext } from "../../contexts/ActivePlaylistContext";
 // The dancing vertical bars above the seek bar. As you probably guessed they are randomized and aren't actually in sync with the audio.
 // As far as I know embedded videos cannot be visualized using the Web Audio API, only proper audio files like mp4 and Youtube is not about to let you have those
 export default function Visualizer() {
+  const numberOfBars = 75;
   const { videoState } = useVideoPlayerContext();
   const { currentlyPlaying } = useActivePlaylistContext();
   const heightsFunction = useRef<(prev: number) => number>(() => 10);
   const intervalHandle = useRef<number>(0);
   const [heights, setHeights] = useState<number[]>(
-    Array.from({ length: 75 }, () => 10)
+    Array.from({ length: numberOfBars }, () => 10)
   );
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function Visualizer() {
   }, [videoState.playing]);
 
   useEffect(() => {
-    setHeights(Array.from({ length: 75 }, () => 0));
+    setHeights(Array.from({ length: numberOfBars }, () => 0));
   }, [currentlyPlaying.url]);
 
   useEffect(() => {
