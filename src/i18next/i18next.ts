@@ -95,8 +95,8 @@ i18n.use(initReactI18next).init({
           non-youtube sources and don't want to edit them back one by one.`,
           },
           fileupload: {
-            title: "Use OTF for temporary storage",
-            description: `When turned <strong>ON</strong> exported playlists will be temporarily saved to OTF (One Time File, a temporary file sharing storage), and imports will also be
+            title: "Use Medea for temporary storage",
+            description: `When turned <strong>ON</strong> exported playlists will be temporarily saved to Medea (a temporary file and image sharing storage), and imports will also be
             downloaded from there. Useful for transferring your playlists from one device to another by persisting it to the 'cloud'. These uploads will be deleted after 27 days or after 
             the first time they're downloaded. If turned <strong>OFF</strong> you will download/upload files locally.`,
           },
@@ -214,7 +214,7 @@ i18n.use(initReactI18next).init({
           },
           fileupload: {
             title: "OTF használata ideiglenes tárolásra",
-            description: `Ha <strong>BE</strong> állapotban van akkor az exportált lejátszási listákat ideiglenesen elmenti az OTF (One Time File) ideiglenes tárhelyre és az 
+            description: `Ha <strong>BE</strong> állapotban van akkor az exportált lejátszási listákat ideiglenesen elmenti a Medea ideiglenes tárhelyre és az 
             importálás is innen tölti le őket. Hasznos ha a "felhőn" keresztül át szeretnéd menteni a listáidat egyik eszközről a másikra. Ezek a feltöltések 27 nap után törlődnek az oldalról  
             vagy az első letöltést követően. <strong>KI</strong> kapcsolt állapotban a lejátszási listáidat lokális fájlokként kell fel- és letöltened.`,
           },
