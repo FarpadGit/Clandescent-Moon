@@ -3,14 +3,10 @@ import { LSRootKey, useAppContext } from "./AppContext";
 import { usePlaylistsContext } from "./PlaylistsContext";
 import { useActivePlaylistContext } from "./ActivePlaylistContext";
 import { useVideoPlayerContext } from "./VideoPlayerContext";
+import { AESEncode } from "@/utils/encode";
 import Papa from "papaparse";
 import FileSaver from "file-saver";
 import LZString from "lz-string";
-
-// reverse cors proxy required for ki.tc as it doesn't provide an Access-Control-Allow-Origin header for client side requests
-// alternatives:
-// "https://thingproxy.freeboard.io/fetch/"
-const REVERSE_PROXY_PREFIX = "https://corsproxy.io/?url=";
 
 export type userActions =
   | "select"
@@ -354,25 +350,22 @@ export default ({ children }: { children: ReactNode }) => {
   }
 
   async function saveToCloud(playlistData: string) {
-    const reqBody = new FormData();
-    reqBody.append("file", new Blob([playlistData], { type: "text/csv" }));
+    const encodedPayload = await AESEncode(playlistData);
 
-    const response = await fetch(
-      REVERSE_PROXY_PREFIX + "https://ki.tc/file/u/",
-      {
-        method: "POST",
-        body: reqBody,
-      }
-    )
+    const response = await fetch(import.meta.env["VITE_CLOUD_URL"], {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        origin: "CM",
+        ac: encodedPayload,
+      }),
+    })
       .then((res) => res.json())
       .catch(() => null);
 
-    const downloadLink: string = response?.file?.link;
+    const downloadId = response?.download_id;
 
-    if (!downloadLink) return null;
-
-    const downloadId = downloadLink.replace("https://ki.tc/f/", "");
-
+    if (!downloadId) return null;
     return downloadId;
   }
 
@@ -421,7 +414,7 @@ export default ({ children }: { children: ReactNode }) => {
   async function importFromCloud(id: string) {
     try {
       const response = await fetch(
-        REVERSE_PROXY_PREFIX + `https://ki.tc/f/${id}`
+        import.meta.env["VITE_CLOUD_URL"] + `/${id}`
       ).then((res) => res.text());
 
       // checking for {error: messsage} type responses
@@ -429,7 +422,8 @@ export default ({ children }: { children: ReactNode }) => {
         if (JSON.parse(response).error) return false;
       } catch (error) {}
 
-      const decompressedPL = LZString.decompressFromUTF16(response);
+      const PLData = JSON.parse(response).content;
+      const decompressedPL = LZString.decompressFromUTF16(PLData);
 
       importPlaylist(decompressedPL);
       return true;
