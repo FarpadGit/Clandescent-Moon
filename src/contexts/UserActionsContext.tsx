@@ -354,7 +354,10 @@ export default ({ children }: { children: ReactNode }) => {
 
     const response = await fetch(import.meta.env["VITE_CLOUD_URL"], {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify({
         origin: "CM",
         ac: encodedPayload,
