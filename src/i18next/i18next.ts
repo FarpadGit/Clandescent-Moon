@@ -213,13 +213,16 @@ i18n.use(initReactI18next).init({
             Akkor kapcsold <strong>KI</strong>, ha sok máshonnan származó címet szeretnél hozzáadni és nem szeretnéd őket egyesével visszaszerkeszteni a felvétel után.`,
           },
           fileupload: {
-            title: "OTF használata ideiglenes tárolásra",
+            title: "Medea használata ideiglenes tárolásra",
             description: `Ha <strong>BE</strong> állapotban van akkor az exportált lejátszási listákat ideiglenesen elmenti a Medea ideiglenes tárhelyre és az 
             importálás is innen tölti le őket. Hasznos ha a "felhőn" keresztül át szeretnéd menteni a listáidat egyik eszközről a másikra. Ezek a feltöltések 27 nap után törlődnek az oldalról  
             vagy az első letöltést követően. <strong>KI</strong> kapcsolt állapotban a lejátszási listáidat lokális fájlokként kell fel- és letöltened.`,
           },
           import: {
-            title: "Lejátszási lista importálása fájlból",
+            title: {
+              local: "Lejátszási lista importálása fájlból",
+              external: "Lejátszási lista importálása tárolóból",
+            },
             description: `Tölts be egy vagy több lejátszási listát egy megfelelően formázott CSV fájlból.
             A listák nevének szerepelnie kell az első adatsorban és betöltés után felülír minden már létező azonos nevű lejátszási listát.
             Egy példa a fájl tartalmi formájára:<br/><br/>
@@ -229,8 +232,14 @@ i18n.use(initReactI18next).init({
           },
           export: {
             title: {
-              all: "Összes lejátszási lista exportálása fájlba",
-              current: "Aktív lejátszási lista exportálása fájlba",
+              local: {
+                all: "Összes lejátszási lista exportálása fájlba",
+                current: "Aktív lejátszási lista exportálása fájlba",
+              },
+              external: {
+                all: "Összes lejátszási lista exportálása tárolóba",
+                current: "Aktív lejátszási lista exportálása tárolóba",
+              },
             },
             description: `Mentsd el az összes vagy csak a jelenleg játszott lejátszási listát egy CSV fájlba. A határoló karakterek pontosvesszők lesznek 
             de az importáló funkció vesszőket is elfogad.`,
