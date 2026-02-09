@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { userActions } from "@/contexts/UserActionsContext";
 import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
 import {
-  PiCaretCircleDoubleDownBold,
-  PiCaretCircleDoubleUpBold,
-  PiXCircleBold,
+  PiCaretDoubleDownBold,
+  PiCaretDoubleUpBold,
+  PiXBold,
 } from "react-icons/pi";
 import { FiEdit3, FiCheckSquare } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
@@ -114,7 +114,7 @@ export default function ListItem({
           click={() => onUserAction("move-up")}
           disabled={isEditMode || isFirst}
         >
-          <PiCaretCircleDoubleUpBold alignmentBaseline="central" />
+          <PiCaretDoubleUpBold alignmentBaseline="central" />
         </Button>
         {/* Play button */}
         <PlayButton active={isActive} />
@@ -125,7 +125,7 @@ export default function ListItem({
           click={() => onUserAction("move-down")}
           disabled={isEditMode || isLast}
         >
-          <PiCaretCircleDoubleDownBold alignmentBaseline="central" />
+          <PiCaretDoubleDownBold alignmentBaseline="central" />
         </Button>
         {/* Delete Button */}
         <Button
@@ -134,15 +134,14 @@ export default function ListItem({
           click={() => onUserAction("delete")}
           disabled={isEditMode}
         >
-          <PiXCircleBold alignmentBaseline="central" />
+          <PiXBold alignmentBaseline="central" />
         </Button>
       </div>
     </>
   );
 }
 
-interface UnpropagatedButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface UnpropagatedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   click: () => void;
 }
 function Button({ children, click, ...props }: UnpropagatedButtonProps) {
