@@ -48,6 +48,11 @@ export default function VerticalList({
     itemAdded.current = true;
   }
 
+  function handleSelect(index: number, item: ListItemType) {
+    if (index === selectedIndex) onUserAction(item.id, "play");
+    else onUserAction(item.id, "select");
+  }
+
   return (
     <>
       {/* Add new item input */}
@@ -85,11 +90,15 @@ export default function VerticalList({
               className={`text-start ${
                 index === selectedIndex ? "selected" : ""
               }`}
+              tabIndex={0}
               active={index === activeIndex}
               onClick={(e) => {
                 e.stopPropagation();
-                if (index === selectedIndex) onUserAction(item.id, "play");
-                else onUserAction(item.id, "select");
+                handleSelect(index, item);
+              }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === "Enter") handleSelect(index, item);
               }}
             >
               <ListItem
