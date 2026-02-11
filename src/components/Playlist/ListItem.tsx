@@ -168,6 +168,7 @@ function PlayButton({ active = false }: { active?: boolean }) {
   return (
     <svg
       data-testid="play-btn"
+      tabIndex={0}
       className={`playButton ${buttonStateClass()}`}
       viewBox="0 0 163 163"
       version="1.1"
