@@ -51,17 +51,15 @@ describe("UserActionsContext", () => {
   };
 
   // mocked response for ki.tc API that returns a download link after uploading a file to it.
-  const mockKitcUploadResponse = {
-    file: {
-      link: "FakeKitcLink",
-    },
+  const mockUploadResponse = {
+    download_id: "FakeLink",
   };
 
   // mocked response for ki.tc API that returns the uploaded file (which was compressed before upload and will try to decompress it).
   const downloadedPlaylistName = "mock downloaded playlist";
-  const mockKitcDownloadResponse = LZString.compressToUTF16(
-    downloadedPlaylistName
-  );
+  const mockDownloadResponse = JSON.stringify({
+    content: LZString.compressToUTF16(downloadedPlaylistName),
+  });
 
   // mocked response for fetching a local CSV preset file with fetch
   const mockPreset = "Fake Playlist\nFakeUrl1\nFakeUrl2";
@@ -84,14 +82,14 @@ describe("UserActionsContext", () => {
           json: () => Promise.resolve(mockYTResponse),
         } as Response);
       }
-      if (input.toString().includes("ki.tc/file/u/")) {
+      if (input.toString().endsWith("localhost:8000/api/files")) {
         return Promise.resolve({
-          json: () => Promise.resolve(mockKitcUploadResponse),
+          json: () => Promise.resolve(mockUploadResponse),
         } as Response);
       }
-      if (input.toString().includes("ki.tc/f/")) {
+      if (input.toString().includes("localhost:8000/api/files/")) {
         return Promise.resolve({
-          text: () => Promise.resolve(mockKitcDownloadResponse),
+          text: () => Promise.resolve(mockDownloadResponse),
         } as Response);
       }
       if (input.toString().includes("/presets/")) {
@@ -397,13 +395,13 @@ describe("UserActionsContext", () => {
     it("should export active playlist to external storage", async () => {
       const downloadLink = await result.current.exportActiveToCloud();
 
-      expect(downloadLink).toBe(mockKitcUploadResponse.file.link);
+      expect(downloadLink).toBe(mockUploadResponse.download_id);
     });
 
     it("should export all playlists to external storage", async () => {
       const downloadLink = await result.current.exportAllToCloud();
 
-      expect(downloadLink).toBe(mockKitcUploadResponse.file.link);
+      expect(downloadLink).toBe(mockUploadResponse.download_id);
     });
 
     it("should import playlists from file", () => {
@@ -432,9 +430,8 @@ describe("UserActionsContext", () => {
     });
 
     it("should import playlists from external storage", async () => {
-      const importResult = await result.current.importFromCloud(
-        mockKitcDownloadResponse
-      );
+      const importResult =
+        await result.current.importFromCloud(mockDownloadResponse);
 
       expect(importResult).toBe(true);
       localStorage.removeItem(downloadedPlaylistName);
