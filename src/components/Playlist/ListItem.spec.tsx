@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cleanup,
   fireEvent,
@@ -20,6 +20,7 @@ import { MidnightPlayerWrapper } from "@/../testing/wrappers";
 describe("ListItem", () => {
   let rerender: (ui: React.ReactNode) => void;
   let onUserActionSpy = vi.fn();
+  let onScrollRequestSpy = vi.fn();
 
   const componentToTest = (
     <ListItem
@@ -29,6 +30,7 @@ describe("ListItem", () => {
       isLast={false}
       textOnEdit="mockUrl"
       onUserAction={onUserActionSpy}
+      onScrollRequest={onScrollRequestSpy}
     />
   );
 
@@ -69,7 +71,7 @@ describe("ListItem", () => {
         isLast={false}
         textOnEdit="mockUrl"
         onUserAction={() => {}}
-      />
+      />,
     );
 
     expect(screen.getByText("Unknown Video")).toBeTruthy();
@@ -121,7 +123,7 @@ describe("ListItem", () => {
         isLast={false}
         textOnEdit="mockUrl"
         onUserAction={() => {}}
-      />
+      />,
     );
 
     expect(screen.getByTestId("up-btn").hasAttribute("disabled")).toBe(true);
@@ -135,9 +137,44 @@ describe("ListItem", () => {
         isLast={true}
         textOnEdit="mockUrl"
         onUserAction={() => {}}
-      />
+      />,
     );
 
     expect(screen.getByTestId("down-btn").hasAttribute("disabled")).toBe(true);
+  });
+
+  describe("timed test", () => {
+    beforeEach(() => {
+      vi.useFakeTimers({});
+    });
+
+    it('should call onUserAction with "move-to-top" and request a scroll into view if item was moved to the top of list', async () => {
+      fireEvent.pointerDown(screen.getByTestId("up-btn"));
+      await vi.advanceTimersByTimeAsync(1000);
+
+      expect(onUserActionSpy).toHaveBeenCalledWith("move-to-top");
+      expect(onScrollRequestSpy).toHaveBeenCalled();
+    });
+
+    it('should call onUserAction with "move-to-bottom" and request a scroll into view if item was moved to the bottom of list', async () => {
+      fireEvent.pointerDown(screen.getByTestId("down-btn"));
+      await vi.advanceTimersByTimeAsync(1000);
+
+      expect(onUserActionSpy).toHaveBeenCalledWith("move-to-bottom");
+      expect(onScrollRequestSpy).toHaveBeenCalled();
+    });
+    it.each(["up-btn", "down-btn"])(
+      'should diplay a charging ring if "move-up" or "move-down" button is held down',
+      async (testid) => {
+        fireEvent.pointerDown(screen.getByTestId(testid));
+        await vi.advanceTimersByTimeAsync(510);
+
+        expect(screen.getByTestId("charge-circle")).toBeTruthy();
+      },
+    );
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
   });
 });

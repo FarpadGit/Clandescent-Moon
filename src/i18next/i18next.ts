@@ -55,6 +55,13 @@ i18n.use(initReactI18next).init({
         },
         videos: {
           unknownTitle: "Unknown Video",
+          controls: {
+            editButton: "Edit Item",
+            editSaveButton: "Accept Changes",
+            moveUpButton: "Move Up\nLong press: Move to Top",
+            moveDownButton: "Move Down\nLong press: Move to Bottom",
+            deleteButton: "Delete Item",
+          },
         },
         options: {
           ON: "ON",
@@ -178,6 +185,15 @@ i18n.use(initReactI18next).init({
         },
         videos: {
           unknownTitle: "Ismeretlen Videó",
+          controls: {
+            editButton: "Szerkesztés",
+            editSaveButton: "Változások mentése",
+            moveUpButton:
+              "Mozgatás felfelé\nHosszú Kattintás: Mozgatás az elejére",
+            moveDownButton:
+              "Mozgatás lefelé\nHosszú Kattintás: Mozgatás a végére",
+            deleteButton: "Törlés",
+          },
         },
         options: {
           ON: "BE",

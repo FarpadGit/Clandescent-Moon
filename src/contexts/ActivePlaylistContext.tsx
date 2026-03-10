@@ -29,6 +29,8 @@ type contextValueType = {
   editVideo: (id: string, newUrl: string) => Promise<void>;
   deleteVideo: (id: string) => void;
   swapVideos: (index1: number, index2: number) => void;
+  pushVideoToTop: (index: number) => void;
+  pushVideoToBottom: (index: number) => void;
 };
 
 const activePlaylistContext = createContext({} as contextValueType);
@@ -57,7 +59,7 @@ export default ({ children }: { children: ReactNode }) => {
     if (!activePlaylist) return;
     const newCSVPlaylist = Papa.unparse(
       activePlaylist.videos.map((item) => ({ someThrowawayHeader: item.url })),
-      { header: false }
+      { header: false },
     );
     localStorage.setItem(activePlaylist.name, newCSVPlaylist);
   }
@@ -65,7 +67,7 @@ export default ({ children }: { children: ReactNode }) => {
   async function getVideoTitle(url: string): Promise<string> {
     try {
       const title = await fetch(
-        `https://noembed.com/embed?url=${encodeURIComponent(url)}`
+        `https://noembed.com/embed?url=${encodeURIComponent(url)}`,
       )
         .then((res) => res.json())
         .then((res) => res.title);
@@ -90,7 +92,7 @@ export default ({ children }: { children: ReactNode }) => {
       CSVPlaylist.map(async (vid) => {
         const title: string = await getVideoTitle(vid);
         return { id: nanoid(), text: title, url: vid };
-      })
+      }),
     );
     setActivePlaylist({ name: playlistName, videos: videos });
     setShuffledPlaylist([]);
@@ -137,7 +139,7 @@ export default ({ children }: { children: ReactNode }) => {
       let randomIndex = -1;
       do {
         randomIndex = Math.floor(
-          Math.random() * (activePlaylist.videos.length - 1)
+          Math.random() * (activePlaylist.videos.length - 1),
         );
       } while (randomIndex === getIndex(currentlyPlayingId));
       playVideo(activePlaylist.videos[randomIndex].id);
@@ -160,7 +162,7 @@ export default ({ children }: { children: ReactNode }) => {
     } else {
       //if playlist is already shuffled then proceed to play the next in line
       const index = shuffledPlaylist.findIndex(
-        (vidId) => vidId === currentlyPlayingId
+        (vidId) => vidId === currentlyPlayingId,
       );
       playVideo(shuffledPlaylist[index + 1]);
     }
@@ -169,7 +171,7 @@ export default ({ children }: { children: ReactNode }) => {
   async function editVideo(id: string, newUrl: string) {
     const title = await getVideoTitle(newUrl);
     const newVideos = activePlaylist!.videos.map((vid) =>
-      vid.id === id ? { id: vid.id, url: newUrl, text: title } : vid
+      vid.id === id ? { id: vid.id, url: newUrl, text: title } : vid,
     );
     setActivePlaylist((prev) => ({ name: prev!.name, videos: newVideos }));
   }
@@ -186,6 +188,22 @@ export default ({ children }: { children: ReactNode }) => {
     if (!activePlaylist) return;
     let videos = activePlaylist.videos;
     [videos[index1], videos[index2]] = [videos[index2], videos[index1]];
+
+    setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
+  }
+
+  function pushVideoToTop(index: number) {
+    if (!activePlaylist || activePlaylist.videos[index] == undefined) return;
+    let videos = activePlaylist.videos.filter((_, i) => i !== index);
+    videos = [activePlaylist.videos[index], ...videos];
+
+    setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
+  }
+
+  function pushVideoToBottom(index: number) {
+    if (!activePlaylist || activePlaylist.videos[index] == undefined) return;
+    let videos = activePlaylist.videos.filter((_, i) => i !== index);
+    videos = [...videos, activePlaylist.videos[index]];
 
     setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
   }
@@ -253,6 +271,8 @@ export default ({ children }: { children: ReactNode }) => {
     editVideo,
     deleteVideo,
     swapVideos,
+    pushVideoToTop,
+    pushVideoToBottom,
   };
 
   return (

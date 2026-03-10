@@ -15,6 +15,8 @@ export type userActions =
   | "delete"
   | "move-up"
   | "move-down"
+  | "move-to-top"
+  | "move-to-bottom"
   | "play";
 
 type ListType = "playlist" | "video";
@@ -24,7 +26,7 @@ type contextValueType = {
     listType: ListType,
     id: string,
     action: userActions,
-    payload?: string
+    payload?: string,
   ) => void;
   exportActiveToFile: () => void;
   exportAllToFile: () => void;
@@ -50,6 +52,8 @@ export default ({ children }: { children: ReactNode }) => {
     editPlaylist,
     deletePlaylist,
     swapPlaylists,
+    pushPlaylistToTop,
+    pushPlaylistToBottom,
   } = usePlaylistsContext();
   const {
     activePlaylist,
@@ -64,6 +68,8 @@ export default ({ children }: { children: ReactNode }) => {
     editVideo,
     deleteVideo,
     swapVideos,
+    pushVideoToTop,
+    pushVideoToBottom,
   } = useActivePlaylistContext();
   const { videoState, playPause } = useVideoPlayerContext();
 
@@ -71,7 +77,7 @@ export default ({ children }: { children: ReactNode }) => {
     listType: ListType,
     id: string,
     action: userActions,
-    payload?: string
+    payload?: string,
   ) {
     if (listType === "playlist")
       handleUserActionsForPlaylist(id, action, payload);
@@ -81,7 +87,7 @@ export default ({ children }: { children: ReactNode }) => {
   function handleUserActionsForPlaylist(
     id: string,
     action: userActions,
-    payload?: string
+    payload?: string,
   ) {
     switch (action) {
       case "select":
@@ -106,6 +112,18 @@ export default ({ children }: { children: ReactNode }) => {
         {
           const index = selectedPlaylist.index;
           swapPlaylists(index, index + 1);
+        }
+        break;
+      case "move-to-top":
+        {
+          const index = selectedPlaylist.index;
+          pushPlaylistToTop(index);
+        }
+        break;
+      case "move-to-bottom":
+        {
+          const index = selectedPlaylist.index;
+          pushPlaylistToBottom(index);
         }
         break;
       case "add":
@@ -140,7 +158,7 @@ export default ({ children }: { children: ReactNode }) => {
   function handleUserActionsForVideo(
     id: string,
     action: userActions,
-    payload?: string
+    payload?: string,
   ) {
     switch (action) {
       case "select":
@@ -166,6 +184,18 @@ export default ({ children }: { children: ReactNode }) => {
         {
           const index = selectedVideo.index;
           swapVideos(index, index + 1);
+        }
+        break;
+      case "move-to-top":
+        {
+          const index = selectedVideo.index;
+          pushVideoToTop(index);
+        }
+        break;
+      case "move-to-bottom":
+        {
+          const index = selectedVideo.index;
+          pushVideoToBottom(index);
         }
         break;
       case "add":
@@ -202,17 +232,17 @@ export default ({ children }: { children: ReactNode }) => {
         // YT playlists are paginated (max 50 items per page is the limit) and must be fetched in chuncks. the next page token is returned in the results
         do {
           const YTResponse = await fetch(
-            `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageTokenParam}${APIKeyParam}`
+            `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}${pageTokenParam}${APIKeyParam}`,
           ).then((res) => res.json());
 
           const urls: string[] = YTResponse.items.map(
-            (item: any) => item.snippet.resourceId.videoId
+            (item: any) => item.snippet.resourceId.videoId,
           );
           pageTokenParam = YTResponse.nextPageToken
             ? "&pageToken=" + YTResponse.nextPageToken
             : "";
           urls.forEach((url) =>
-            addNewVideo("https://www.youtube.com/watch?v=" + url)
+            addNewVideo("https://www.youtube.com/watch?v=" + url),
           );
         } while (pageTokenParam !== "");
       } catch (error) {
@@ -381,7 +411,7 @@ export default ({ children }: { children: ReactNode }) => {
       new Blob([CSVPlaylist], {
         type: "text/plain;charset=utf-8",
       }),
-      `${activePlaylist.name}.csv`
+      `${activePlaylist.name}.csv`,
     );
   }
 
@@ -394,7 +424,7 @@ export default ({ children }: { children: ReactNode }) => {
       new Blob([CSVPlaylists], {
         type: "text/plain;charset=utf-8",
       }),
-      "My Clandescent Moon Playlists.csv"
+      "My Clandescent Moon Playlists.csv",
     );
   }
 
@@ -416,15 +446,20 @@ export default ({ children }: { children: ReactNode }) => {
   async function importFromCloud(id: string) {
     try {
       const response = await fetch(
-        import.meta.env["VITE_CLOUD_URL"] + `/${id}`
+        import.meta.env["VITE_CLOUD_URL"] + `/${id}`,
       ).then((res) => res.text());
+
+      let parsedResponse;
 
       // checking for {error: messsage} type responses
       try {
-        if (JSON.parse(response).error) return false;
-      } catch (error) {}
+        parsedResponse = JSON.parse(response);
+        if (parsedResponse.error) return false;
+      } catch (error) {
+        return false;
+      }
 
-      const PLData = JSON.parse(response).content;
+      const PLData = parsedResponse.content;
       const decompressedPL = LZString.decompressFromUTF16(PLData);
 
       importPlaylist(decompressedPL);
@@ -437,7 +472,7 @@ export default ({ children }: { children: ReactNode }) => {
 
   async function setPlaylistToLocalStorage(plName: string) {
     const fileText = await fetch(`/presets/${plName}.csv`).then((res) =>
-      res.text()
+      res.text(),
     );
     importPlaylist(fileText);
   }

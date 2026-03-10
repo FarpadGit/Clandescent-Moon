@@ -83,8 +83,12 @@ describe("PlaylistsContext", () => {
   });
 
   describe("From Local Storage", () => {
-    const testPlaylists = ["Fake Playlist 1", "Fake Playlist 2"];
-    const testUrls = ["fakeurl1.com", "fakeurl2.com"];
+    const testPlaylists = [
+      "Fake Playlist 1",
+      "Fake Playlist 2",
+      "Fake Playlist 3",
+    ];
+    const testUrls = ["fakeurl1.com", "fakeurl2.com", "fakeurl3.com"];
     let IDs: string[];
 
     beforeAll(() => {
@@ -101,22 +105,18 @@ describe("PlaylistsContext", () => {
     });
 
     it("should load playlists from Local Storage", () => {
-      expect(result.current.playlists).toEqual([
-        {
+      expect(result.current.playlists).toEqual(
+        testPlaylists.map((testPlaylist) => ({
           id: expect.any(String),
-          text: testPlaylists[0],
-        },
-        {
-          id: expect.any(String),
-          text: testPlaylists[1],
-        },
-      ]);
+          text: testPlaylist,
+        })),
+      );
     });
 
     it("should get the size of a playlist", () => {
       const playlistSize = result.current.getPlaylistSize(IDs[0]);
 
-      expect(playlistSize).toBe(2);
+      expect(playlistSize).toBe(testPlaylists.length);
     });
 
     it("should clear all playlist", () => {
@@ -142,7 +142,7 @@ describe("PlaylistsContext", () => {
         result.current.deletePlaylist(IDs[0]);
       });
 
-      expect(result.current.playlists.length).toBe(1);
+      expect(result.current.playlists.length).toBe(testPlaylists.length - 1);
     });
 
     it("should swap the order of two playlists", () => {
@@ -150,13 +150,39 @@ describe("PlaylistsContext", () => {
         result.current.swapPlaylists(0, 1);
       });
 
-      expect(result.current.playlists).toEqual([
-        {
-          id: IDs[1],
-          text: testPlaylists[1],
-        },
-        { id: IDs[0], text: testPlaylists[0] },
-      ]);
+      expect(result.current.playlists[0]).toEqual({
+        id: IDs[1],
+        text: testPlaylists[1],
+      });
+      expect(result.current.playlists[1]).toEqual({
+        id: IDs[0],
+        text: testPlaylists[0],
+      });
+    });
+
+    it("should should move a playlist to be the first element", () => {
+      act(() => {
+        result.current.pushPlaylistToTop(2);
+      });
+
+      expect(result.current.playlists[0]).toEqual({
+        id: IDs[2],
+        text: testPlaylists[2],
+      });
+      expect(result.current.playlists.length).toBe(testPlaylists.length);
+    });
+
+    it("should should move a playlist to be the last element", () => {
+      const length = result.current.playlists.length;
+      act(() => {
+        result.current.pushPlaylistToBottom(0);
+      });
+
+      expect(result.current.playlists[length - 1]).toEqual({
+        id: IDs[0],
+        text: testPlaylists[0],
+      });
+      expect(result.current.playlists.length).toBe(testPlaylists.length);
     });
 
     afterAll(() => {

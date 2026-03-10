@@ -29,7 +29,7 @@ describe("ActivePlaylistContext", () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
         json: () => Promise.resolve({ title: fetchReturnValue }),
-      } as Response)
+      } as Response),
     );
   });
 
@@ -116,7 +116,7 @@ describe("ActivePlaylistContext", () => {
 
   describe("From Local Storage", () => {
     const testPlaylistTitle = "testPlaylist";
-    const testUrls = ["fakeurl1.com", "fakeurl2.com"];
+    const testUrls = ["fakeurl1.com", "fakeurl2.com", "fakeurl3.com"];
     let IDs: string[];
 
     beforeAll(() => {
@@ -138,18 +138,11 @@ describe("ActivePlaylistContext", () => {
     it("should load a playlist from Local Storage", () => {
       expect(result.current.activePlaylist).toEqual({
         name: testPlaylistTitle,
-        videos: [
-          {
-            id: expect.any(String),
-            text: fetchReturnValue,
-            url: testUrls[0],
-          },
-          {
-            id: expect.any(String),
-            text: fetchReturnValue,
-            url: testUrls[1],
-          },
-        ],
+        videos: testUrls.map((testUrl) => ({
+          id: expect.any(String),
+          text: fetchReturnValue,
+          url: testUrl,
+        })),
       });
     });
 
@@ -195,7 +188,9 @@ describe("ActivePlaylistContext", () => {
         result.current.deleteVideo(IDs[0]);
       });
 
-      expect(result.current.activePlaylist?.videos.length).toBe(1);
+      expect(result.current.activePlaylist?.videos.length).toBe(
+        testUrls.length - 1,
+      );
     });
 
     it("should swap the order of two videos", () => {
@@ -203,14 +198,47 @@ describe("ActivePlaylistContext", () => {
         result.current.swapVideos(0, 1);
       });
 
-      expect(result.current.activePlaylist?.videos).toEqual([
-        {
-          id: IDs[1],
-          text: fetchReturnValue,
-          url: testUrls[1],
-        },
-        { id: IDs[0], text: fetchReturnValue, url: testUrls[0] },
-      ]);
+      expect(result.current.activePlaylist?.videos[0]).toEqual({
+        id: IDs[1],
+        text: fetchReturnValue,
+        url: testUrls[1],
+      });
+      expect(result.current.activePlaylist?.videos[1]).toEqual({
+        id: IDs[0],
+        text: fetchReturnValue,
+        url: testUrls[0],
+      });
+    });
+
+    it("should move a video to be the first element", () => {
+      act(() => {
+        result.current.pushVideoToTop(2);
+      });
+
+      expect(result.current.activePlaylist?.videos[0]).toEqual({
+        id: IDs[2],
+        text: fetchReturnValue,
+        url: testUrls[2],
+      });
+      expect(result.current.activePlaylist?.videos.length).toBe(
+        testUrls.length,
+      );
+    });
+
+    it("should move a video to be the last element", () => {
+      const length = result.current.activePlaylist?.videos.length || 0;
+      act(() => {
+        result.current.pushVideoToBottom(0);
+      });
+
+      expect(result.current.activePlaylist?.videos[length - 1]).toEqual({
+        id: IDs[0],
+        text: fetchReturnValue,
+        url: testUrls[0],
+      });
+      expect(result.current.activePlaylist?.videos.length).toBe(
+        testUrls.length,
+      );
     });
 
     afterAll(() => {

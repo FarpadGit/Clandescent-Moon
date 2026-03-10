@@ -38,6 +38,8 @@ export const mockPlaylistsObject = {
   editPlaylist: vi.fn(),
   deletePlaylist: vi.fn(),
   swapPlaylists: vi.fn(),
+  pushPlaylistToTop: vi.fn(),
+  pushPlaylistToBottom: vi.fn(),
 };
 
 export const mockActivePlaylistObject = {
@@ -64,6 +66,8 @@ export const mockActivePlaylistObject = {
   editVideo: vi.fn(),
   deleteVideo: vi.fn(),
   swapVideos: vi.fn(),
+  pushVideoToTop: vi.fn(),
+  pushVideoToBottom: vi.fn(),
 };
 
 export const mockVideoPlayerObject = {

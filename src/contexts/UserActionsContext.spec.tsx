@@ -122,11 +122,11 @@ describe("UserActionsContext", () => {
         "playlist",
         testPlaylistID,
         "add",
-        testPlaylist
+        testPlaylist,
       );
 
       expect(mockPlaylistsObject.addNewPlaylist).toHaveBeenCalledWith(
-        testPlaylist
+        testPlaylist,
       );
     });
 
@@ -134,7 +134,7 @@ describe("UserActionsContext", () => {
       result.current.handleUserActions("playlist", testPlaylistID, "delete");
 
       expect(mockPlaylistsObject.deletePlaylist).toHaveBeenCalledWith(
-        testPlaylistID
+        testPlaylistID,
       );
       expect(mockPlaylistsObject.selectPlaylist).toHaveBeenCalledWith("");
     });
@@ -146,12 +146,12 @@ describe("UserActionsContext", () => {
         "playlist",
         testPlaylistID,
         "edit",
-        testPlaylist
+        testPlaylist,
       );
 
       expect(mockPlaylistsObject.editPlaylist).toHaveBeenCalledWith(
         testPlaylistID,
-        testPlaylist
+        testPlaylist,
       );
     });
 
@@ -160,7 +160,19 @@ describe("UserActionsContext", () => {
 
       expect(mockPlaylistsObject.swapPlaylists).toHaveBeenCalledWith(
         mockPlaylistsObject.selectedPlaylist.index,
-        mockPlaylistsObject.selectedPlaylist.index + 1
+        mockPlaylistsObject.selectedPlaylist.index + 1,
+      );
+    });
+
+    it("should relay moving a playlist to the bottom", () => {
+      result.current.handleUserActions(
+        "playlist",
+        testPlaylistID,
+        "move-to-bottom",
+      );
+
+      expect(mockPlaylistsObject.pushPlaylistToBottom).toHaveBeenCalledWith(
+        mockPlaylistsObject.selectedPlaylist.index,
       );
     });
 
@@ -169,7 +181,19 @@ describe("UserActionsContext", () => {
 
       expect(mockPlaylistsObject.swapPlaylists).toHaveBeenCalledWith(
         mockPlaylistsObject.selectedPlaylist.index,
-        mockPlaylistsObject.selectedPlaylist.index - 1
+        mockPlaylistsObject.selectedPlaylist.index - 1,
+      );
+    });
+
+    it("should relay moving a playlist to the top", () => {
+      result.current.handleUserActions(
+        "playlist",
+        testPlaylistID,
+        "move-to-top",
+      );
+
+      expect(mockPlaylistsObject.pushPlaylistToTop).toHaveBeenCalledWith(
+        mockPlaylistsObject.selectedPlaylist.index,
       );
     });
 
@@ -177,10 +201,10 @@ describe("UserActionsContext", () => {
       result.current.handleUserActions("playlist", testPlaylistID, "play");
 
       expect(mockActivePlaylistObject.loadPlaylist).toHaveBeenCalledWith(
-        mockPlaylistsObject.selectedPlaylist.text
+        mockPlaylistsObject.selectedPlaylist.text,
       );
       expect(mockPlaylistsObject.startPlaylist).toHaveBeenCalledWith(
-        testPlaylistID
+        testPlaylistID,
       );
       expect(mockAppObject.changeToTab).toHaveBeenCalledWith(1);
     });
@@ -189,7 +213,7 @@ describe("UserActionsContext", () => {
       result.current.handleUserActions("playlist", testPlaylistID, "select");
 
       expect(mockPlaylistsObject.selectPlaylist).toHaveBeenCalledWith(
-        testPlaylistID
+        testPlaylistID,
       );
     });
   });
@@ -204,11 +228,11 @@ describe("UserActionsContext", () => {
         "video",
         testVideoID,
         "add",
-        testVideoUrl
+        testVideoUrl,
       );
 
       expect(mockActivePlaylistObject.addNewVideo).toHaveBeenCalledWith(
-        "https://www.youtube.com/watch?v=" + testVideoUrl
+        "https://www.youtube.com/watch?v=" + testVideoUrl,
       );
     });
 
@@ -226,11 +250,11 @@ describe("UserActionsContext", () => {
         "video",
         testVideoID,
         "add",
-        testVideoUrl
+        testVideoUrl,
       );
 
       expect(mockActivePlaylistObject.addNewVideo).toHaveBeenCalledWith(
-        testVideoUrl
+        testVideoUrl,
       );
     });
 
@@ -244,20 +268,20 @@ describe("UserActionsContext", () => {
           "video",
           testVideoID,
           "add",
-          testVideoUrl
+          testVideoUrl,
         ) as unknown as Promise<void>);
       });
 
       expect(mockActivePlaylistObject.addNewVideo).toHaveBeenCalledTimes(
-        mockYTPlaylist.length
+        mockYTPlaylist.length,
       );
       expect(mockActivePlaylistObject.addNewVideo).toHaveBeenNthCalledWith(
         1,
-        "https://www.youtube.com/watch?v=" + mockYTPlaylist[0]
+        "https://www.youtube.com/watch?v=" + mockYTPlaylist[0],
       );
       expect(mockActivePlaylistObject.addNewVideo).toHaveBeenNthCalledWith(
         2,
-        "https://www.youtube.com/watch?v=" + mockYTPlaylist[1]
+        "https://www.youtube.com/watch?v=" + mockYTPlaylist[1],
       );
     });
 
@@ -265,7 +289,7 @@ describe("UserActionsContext", () => {
       result.current.handleUserActions("video", testVideoID, "delete");
 
       expect(mockActivePlaylistObject.deleteVideo).toHaveBeenCalledWith(
-        testVideoID
+        testVideoID,
       );
       expect(mockActivePlaylistObject.selectVideo).toHaveBeenCalledWith("");
     });
@@ -277,12 +301,12 @@ describe("UserActionsContext", () => {
         "video",
         testVideoID,
         "edit",
-        testVideoUrl
+        testVideoUrl,
       );
 
       expect(mockActivePlaylistObject.editVideo).toHaveBeenCalledWith(
         testVideoID,
-        testVideoUrl
+        testVideoUrl,
       );
     });
 
@@ -291,7 +315,15 @@ describe("UserActionsContext", () => {
 
       expect(mockActivePlaylistObject.swapVideos).toHaveBeenCalledWith(
         mockActivePlaylistObject.selectedVideo.index,
-        mockActivePlaylistObject.selectedVideo.index + 1
+        mockActivePlaylistObject.selectedVideo.index + 1,
+      );
+    });
+
+    it("should relay moving a video to the bottom", () => {
+      result.current.handleUserActions("video", testVideoID, "move-to-bottom");
+
+      expect(mockActivePlaylistObject.pushVideoToBottom).toHaveBeenCalledWith(
+        mockActivePlaylistObject.selectedVideo.index,
       );
     });
 
@@ -300,7 +332,15 @@ describe("UserActionsContext", () => {
 
       expect(mockActivePlaylistObject.swapVideos).toHaveBeenCalledWith(
         mockActivePlaylistObject.selectedVideo.index,
-        mockActivePlaylistObject.selectedVideo.index - 1
+        mockActivePlaylistObject.selectedVideo.index - 1,
+      );
+    });
+
+    it("should relay moving a video to the top", () => {
+      result.current.handleUserActions("video", testVideoID, "move-to-top");
+
+      expect(mockActivePlaylistObject.pushVideoToTop).toHaveBeenCalledWith(
+        mockActivePlaylistObject.selectedVideo.index,
       );
     });
 
@@ -308,7 +348,7 @@ describe("UserActionsContext", () => {
       result.current.handleUserActions("video", testVideoID, "play");
 
       expect(mockActivePlaylistObject.playVideo).toHaveBeenCalledWith(
-        testVideoID
+        testVideoID,
       );
     });
 
@@ -333,7 +373,7 @@ describe("UserActionsContext", () => {
       result.current.handleUserActions("video", testVideoID, "select");
 
       expect(mockActivePlaylistObject.selectVideo).toHaveBeenCalledWith(
-        testVideoID
+        testVideoID,
       );
     });
   });
@@ -379,7 +419,7 @@ describe("UserActionsContext", () => {
 
       expect(saveAsSpy).toHaveBeenCalledWith(
         expect.any(Blob),
-        testPlaylistTitle + ".csv"
+        testPlaylistTitle + ".csv",
       );
     });
 
@@ -388,7 +428,7 @@ describe("UserActionsContext", () => {
 
       expect(saveAsSpy).toHaveBeenCalledWith(
         expect.any(Blob),
-        "My Clandescent Moon Playlists.csv"
+        "My Clandescent Moon Playlists.csv",
       );
     });
 
@@ -420,10 +460,10 @@ describe("UserActionsContext", () => {
       const playlistBFromLS = localStorage.getItem(testPlaylists[1]);
 
       expect(playlistAFromLS).toBe(
-        [testVideos[0][0], testVideos[1][0]].join("\r\n")
+        [testVideos[0][0], testVideos[1][0]].join("\r\n"),
       );
       expect(playlistBFromLS).toBe(
-        [testVideos[0][1], testVideos[1][1]].join("\r\n")
+        [testVideos[0][1], testVideos[1][1]].join("\r\n"),
       );
       localStorage.removeItem(testPlaylists[0]);
       localStorage.removeItem(testPlaylists[1]);

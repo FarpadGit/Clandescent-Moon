@@ -8,13 +8,13 @@ export async function AESEncode(data: string) {
     str2ab(secretKey),
     { name: "AES-CBC" },
     false,
-    ["encrypt"]
+    ["encrypt"],
   );
 
   const ctEncrypted = await window.crypto.subtle.encrypt(
     { name: "AES-CBC", iv: iv },
     cryptoKey,
-    binaryData
+    binaryData,
   );
   const binaryCipherText = new Uint8Array(ctEncrypted);
   const ciphertext = btoa(String.fromCharCode(...binaryCipherText));
@@ -30,5 +30,5 @@ function str2ab(str: string) {
   for (let i = 0; i < str.length; i++) {
     bufView[i] = str.charCodeAt(i);
   }
-  return buf;
+  return bufView;
 }

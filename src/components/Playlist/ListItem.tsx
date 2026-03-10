@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { userActions } from "@/contexts/UserActionsContext";
 import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
 import {
@@ -9,7 +9,7 @@ import {
 import { FiEdit3, FiCheckSquare } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
-type ListItemProps = {
+export type ListItemProps = {
   text: string;
   subtext?: string | false;
   textOnEdit: string;
@@ -18,6 +18,7 @@ type ListItemProps = {
   isActive?: boolean;
   isSelected?: boolean;
   onUserAction: (action: userActions, payload?: string) => void;
+  onScrollRequest?: () => void;
 };
 export default function ListItem({
   text,
@@ -28,6 +29,7 @@ export default function ListItem({
   isActive = false,
   isSelected = false,
   onUserAction,
+  onScrollRequest: scrollIntoView,
 }: ListItemProps) {
   const [editedText, setEditedText] = useState(textOnEdit);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -58,7 +60,7 @@ export default function ListItem({
               }`}
               style={
                 {
-                  lineHeight: subtext ? "1.5rem" : "1.75rem",
+                  lineHeight: "1.75rem",
                   "--marquee-duration":
                     1 + Math.max(0, text.length - 35) / 10 + "s",
                 } as React.CSSProperties
@@ -70,15 +72,6 @@ export default function ListItem({
               </span>
             </div>
           </div>
-          {/* if it has subtexts to show, display it under main text */}
-          {subtext && (
-            <div
-              data-testid="subtext"
-              className="d-flex justify-content-center"
-            >
-              <span className={`fs-6 mb-0 list-item-text`}>{subtext}</span>
-            </div>
-          )}
         </div>
       )}
       {isEditMode && (
@@ -94,12 +87,23 @@ export default function ListItem({
           }}
         />
       )}
+      {/* if it has subtexts to show, display it under main text */}
+      {subtext && (
+        <div data-testid="subtext" className="d-flex justify-content-center">
+          <span className={`fs-6 mb-0 list-item-text`}>{subtext}</span>
+        </div>
+      )}
       <div className="list-item-controls">
         {/* Edit button */}
         <Button
           data-testid="edit-btn"
           className="playlist-button"
           click={() => onEdit()}
+          title={
+            isEditMode
+              ? t("videos.controls.editSaveButton")
+              : t("videos.controls.editButton")
+          }
         >
           {isEditMode ? (
             <FiCheckSquare alignmentBaseline="central" />
@@ -112,7 +116,12 @@ export default function ListItem({
           data-testid="up-btn"
           className="playlist-button"
           click={() => onUserAction("move-up")}
+          onLongPress={() => {
+            onUserAction("move-to-top");
+            setTimeout(() => scrollIntoView?.(), 0);
+          }}
           disabled={isEditMode || isFirst}
+          title={t("videos.controls.moveUpButton")}
         >
           <PiCaretDoubleUpBold alignmentBaseline="central" />
         </Button>
@@ -123,7 +132,12 @@ export default function ListItem({
           data-testid="down-btn"
           className="playlist-button"
           click={() => onUserAction("move-down")}
+          onLongPress={() => {
+            onUserAction("move-to-bottom");
+            setTimeout(() => scrollIntoView?.(), 0);
+          }}
           disabled={isEditMode || isLast}
+          title={t("videos.controls.moveDownButton")}
         >
           <PiCaretDoubleDownBold alignmentBaseline="central" />
         </Button>
@@ -133,6 +147,7 @@ export default function ListItem({
           className="playlist-button border-danger"
           click={() => onUserAction("delete")}
           disabled={isEditMode}
+          title={t("videos.controls.deleteButton")}
         >
           <PiXBold alignmentBaseline="central" />
         </Button>
@@ -141,20 +156,97 @@ export default function ListItem({
   );
 }
 
-interface UnpropagatedButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+// Playlist button that's "chargeble" and non-propagating
+interface PlaylistButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   click: () => void;
+  onLongPress?: () => void;
 }
-function Button({ children, click, ...props }: UnpropagatedButtonProps) {
+function Button({
+  children,
+  click,
+  onLongPress: longPressCallback,
+  ...props
+}: PlaylistButtonProps) {
+  const [pressProgress, setPressProgress] = useState<number | undefined>(
+    undefined,
+  );
+  const intervalHandle = useRef<NodeJS.Timeout>();
+  const pressCancelled = useRef(false);
+
+  function handleLongPress() {
+    pressCancelled.current = false;
+    if (longPressCallback == null || props.disabled) return;
+    setTimeout(() => {
+      if (!pressCancelled.current) setPressProgress(0);
+    }, 500);
+  }
+
+  useEffect(() => {
+    if (pressProgress === 0) {
+      intervalHandle.current = setInterval(() => {
+        setPressProgress((prev) => {
+          if (prev != undefined && prev < 100) return prev + 2;
+          return prev;
+        });
+      }, 1);
+    }
+    if (pressProgress != undefined && pressProgress >= 100) {
+      longPressCallback!();
+      clearInterval(intervalHandle.current);
+      setTimeout(() => setPressProgress(undefined), 100);
+    }
+    if (pressCancelled.current) {
+      clearInterval(intervalHandle.current);
+      setPressProgress(undefined);
+    }
+  }, [pressProgress, pressCancelled.current]);
+
   return (
-    <button
-      {...props}
-      onClick={(e) => {
-        e.stopPropagation();
-        click();
-      }}
-    >
-      {children}
-    </button>
+    <div className="position-relative d-flex h-100">
+      {pressProgress != undefined && <ChargeRing progress={pressProgress} />}
+      <button
+        {...props}
+        onClick={(e) => {
+          e.stopPropagation();
+          pressCancelled.current = true;
+          click();
+        }}
+        onPointerDown={() => handleLongPress()}
+        onPointerUp={() => (pressCancelled.current = true)}
+        onPointerOut={() => (pressCancelled.current = true)}
+      >
+        {children}
+      </button>
+    </div>
+  );
+}
+
+function ChargeRing({
+  progress,
+  diameter = 40,
+}: {
+  progress: number;
+  diameter?: number;
+}) {
+  const circumference = diameter * Math.PI;
+  const strokeDashoffset = Math.max(
+    circumference - (Math.min(progress, 100) / 100) * circumference,
+    0,
+  );
+  return (
+    <svg height="100%" width="100%" className="charge-ring">
+      <circle
+        data-testid="charge-circle"
+        stroke="var(--active-color-2)"
+        fill="transparent"
+        strokeWidth="2"
+        strokeDasharray={circumference + " " + circumference}
+        style={{ strokeDashoffset }}
+        r="calc(50% - 1px)"
+        cx="50%"
+        cy="50%"
+      />
+    </svg>
   );
 }
 

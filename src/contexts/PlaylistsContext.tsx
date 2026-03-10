@@ -22,6 +22,8 @@ type contextValueType = {
   editPlaylist: (id: string, newName: string) => void;
   deletePlaylist: (id: string) => void;
   swapPlaylists: (index1: number, index2: number) => void;
+  pushPlaylistToTop: (index: number) => void;
+  pushPlaylistToBottom: (index: number) => void;
 };
 
 const playlistsContext = createContext({} as contextValueType);
@@ -80,7 +82,7 @@ export default ({ children }: { children: ReactNode }) => {
 
   function editPlaylist(id: string, newName: string) {
     const newPlaylists = playlists.map((pl) =>
-      pl.id === id ? { id: pl.id, text: newName } : pl
+      pl.id === id ? { id: pl.id, text: newName } : pl,
     );
     const oldName = playlists.find((pl) => pl.id === id)?.text || "";
     const LSPlaylist = localStorage.getItem(oldName);
@@ -103,6 +105,26 @@ export default ({ children }: { children: ReactNode }) => {
     let temp = [...playlists];
     [temp[index1], temp[index2]] = [temp[index2], temp[index1]];
     setPlaylists(temp);
+  }
+
+  function pushPlaylistToTop(index: number) {
+    if (playlists.length === 0 || playlists[index] == undefined) return;
+    const newPlaylists = [
+      playlists[index],
+      ...playlists.filter((_, i) => i !== index),
+    ];
+
+    setPlaylists(newPlaylists);
+  }
+
+  function pushPlaylistToBottom(index: number) {
+    if (playlists.length === 0 || playlists[index] == undefined) return;
+    const newPlaylists = [
+      ...playlists.filter((_, i) => i !== index),
+      playlists[index],
+    ];
+
+    setPlaylists(newPlaylists);
   }
 
   function getText(id: string): string {
@@ -150,6 +172,8 @@ export default ({ children }: { children: ReactNode }) => {
     editPlaylist,
     deletePlaylist,
     swapPlaylists,
+    pushPlaylistToTop,
+    pushPlaylistToBottom,
   };
 
   return (

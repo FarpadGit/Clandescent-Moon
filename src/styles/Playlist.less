@@ -114,9 +114,16 @@
                         color: var(--app-fg-faded);
                     }
 
-                    .playlist-button:first-child,
-                    .playlist-button:last-child {
-                        height: 75%;
+                    div:has(.playlist-button):first-child,
+                    div:has(.playlist-button):last-child {
+                        height: 75% !important;
+                    }
+
+                    .charge-ring {
+                        position: absolute;
+                        rotate: -90deg;
+                        pointer-events: none;
+                        user-select: none;
                     }
                     
                     .playButton {
