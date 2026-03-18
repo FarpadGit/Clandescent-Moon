@@ -13,7 +13,7 @@ i18n.use(initReactI18next).init({
         description: {
           intro: `Welcome to Clandescent Moon, an online playlist editor that let's
               you listen to music or watch videos from Youtube, Vimeo,
-              DailyMotion or any other major video sharing platform.`,
+              DailyMotion and many other major video sharing platform.`,
           header1: `How does this work?`,
           paragraph1: `Clandescent Moon saves your playlists directly to the browser's
               Local Storage as text data. It doesn't care who you are or what
@@ -48,6 +48,7 @@ i18n.use(initReactI18next).init({
         settingsTab: "⚙️",
         emptyList:
           "This list is currently empty. Try adding some new items to it.",
+        loadingMessage: "Loading your playlist...",
         loadError:
           "An error occured while trying to read your playlists from Local Storage. Create a new list to reset old data or try fixing it manually.",
         playlists: {
@@ -147,7 +148,7 @@ i18n.use(initReactI18next).init({
     hu: {
       translation: {
         description: {
-          intro: `Üdv a Clandescent Moon-on, ez egy olyan online lejátszási lista szerkesztő amivel 
+          intro: `Üdv a Clandescent Moon-on! Ez egy olyan online lejátszási lista szerkesztő amivel 
               zenéket és videókat játhatsz le a Youtube-ról, Vimeo-ról,
               DailyMotion-ről vagy bármelyik másik nagyobb videómegosztó webhelyről.`,
           header1: `Hogyan is működik ez?`,
@@ -178,6 +179,7 @@ i18n.use(initReactI18next).init({
         videosTab: "Videók",
         settingsTab: "⚙️",
         emptyList: "Ez a lista jelenleg üres. Próbálj hozzáadni valamit.",
+        loadingMessage: "Lista betöltése folyamatban...",
         loadError:
           "Hiba történt a listáid Helyi Tárolóból való kiolvasása közben. Hozz létre egy új listát hogy lenullázzuk a régi adatokat vagy próbáld meg manuálisan kijavítani.",
         playlists: {
