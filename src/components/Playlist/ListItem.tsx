@@ -9,7 +9,7 @@ import {
 import { FiEdit3, FiCheckSquare } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
-export type ListItemProps = {
+type ListItemProps = {
   text: string;
   subtext?: string | false;
   textOnEdit: string;

@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { ListItemType, useAppContext } from "@/contexts/AppContext";
 import { usePlaylistsContext } from "@/contexts/PlaylistsContext";
 import { userActions } from "@/contexts/UserActionsContext";
-import ListItem, { type ListItemProps } from "./ListItem";
+import ListItem from "./ListItem";
 import {
   ListGroup as BS_ListGroup,
   ListGroupItem as BS_ListGroupItem,
-  ListGroupItemProps,
   Spinner,
 } from "react-bootstrap";
 import { FiPlus } from "react-icons/fi";
@@ -31,6 +30,7 @@ export default function VerticalList({
   const [itemToAdd, setItemToAdd] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
+  const listItemsRef = useRef<{ [key: string]: HTMLAnchorElement }>({});
   const itemAdded = useRef(false);
   const { t } = useTranslation();
 
@@ -88,21 +88,12 @@ export default function VerticalList({
           !LSError &&
           activeList.length > 0 &&
           activeList.map((item, index) => (
-            <ListGroupItem
-              key={item.id + "_" + item.text}
-              listItemProps={{
-                text: item.text,
-                subtext:
-                  subtexts &&
-                  getPlaylistSize(item.id) + " " + t("playlists.counter"),
-                textOnEdit: item.url ?? item.text,
-                isFirst: index === 0,
-                isLast: index === activeList.length - 1,
-                isActive: index === activeIndex,
-                isSelected: index === selectedIndex,
-                onUserAction: (action, payload) =>
-                  onUserAction(item.id, action, payload),
+            <BS_ListGroupItem
+              ref={(el) => {
+                if (el) listItemsRef.current[item.id] = el;
+                else delete listItemsRef.current[item.id];
               }}
+              key={item.id + "_" + item.text}
               className={`text-start ${
                 index === selectedIndex ? "selected" : ""
               }`}
@@ -116,29 +107,30 @@ export default function VerticalList({
                 e.stopPropagation();
                 if (e.key === "Enter") handleSelect(index, item);
               }}
-            ></ListGroupItem>
+            >
+              <ListItem
+                text={item.text}
+                subtext={
+                  subtexts &&
+                  getPlaylistSize(item.id) + " " + t("playlists.counter")
+                }
+                textOnEdit={item.url ?? item.text}
+                isFirst={index === 0}
+                isLast={index === activeList.length - 1}
+                isActive={index === activeIndex}
+                isSelected={index === selectedIndex}
+                onUserAction={(action, payload) =>
+                  onUserAction(item.id, action, payload)
+                }
+                onScrollRequest={() => {
+                  listItemsRef.current[item.id]?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              />
+            </BS_ListGroupItem>
           ))}
       </BS_ListGroup>
     </>
-  );
-}
-
-function ListGroupItem({
-  listItemProps,
-  ...props
-}: {
-  listItemProps: Omit<ListItemProps, "onScrollRequest">;
-} & ListGroupItemProps) {
-  const ref = useRef<HTMLElement>(null);
-
-  return (
-    <BS_ListGroupItem ref={ref} {...props}>
-      <ListItem
-        {...listItemProps}
-        onScrollRequest={() => {
-          ref.current?.scrollIntoView({ behavior: "smooth" });
-        }}
-      />
-    </BS_ListGroupItem>
   );
 }
