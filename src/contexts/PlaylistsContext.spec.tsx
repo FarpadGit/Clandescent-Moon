@@ -1,5 +1,6 @@
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -8,14 +9,16 @@ import {
   vi,
 } from "vitest";
 import { act, renderHook } from "@testing-library/react";
+import { useAppContext, LSRootKey } from "./AppContext";
 import PlaylistsContext, {
   type usePlaylistsContext as imported,
 } from "./PlaylistsContext";
 import { mockPlaylistsContext } from "@/../testing/setupMocks";
-import { LSRootKey } from "./AppContext";
+import { mockAppObject } from "../../testing/mockContextReturnValues";
 
 describe("PlaylistsContext", () => {
   let usePlaylistsContext: typeof imported;
+  const mockedUseApp = vi.mocked(useAppContext);
   const contextWrapper = ({ children }: { children: React.ReactNode }) => (
     <PlaylistsContext>{children}</PlaylistsContext>
   );
@@ -28,6 +31,8 @@ describe("PlaylistsContext", () => {
   });
 
   beforeEach(() => {
+    mockedUseApp.mockReturnValue(mockAppObject);
+
     ({ result } = renderHook(() => usePlaylistsContext(), {
       wrapper: contextWrapper,
     }));
@@ -91,12 +96,10 @@ describe("PlaylistsContext", () => {
     const testUrls = ["fakeurl1.com", "fakeurl2.com", "fakeurl3.com"];
     let IDs: string[];
 
-    beforeAll(() => {
+    beforeEach(() => {
       localStorage.setItem(LSRootKey, JSON.stringify(testPlaylists));
       localStorage.setItem(testPlaylists[0], testUrls.join("\n"));
-    });
 
-    beforeEach(() => {
       ({ result } = renderHook(() => usePlaylistsContext(), {
         wrapper: contextWrapper,
       }));
@@ -185,9 +188,13 @@ describe("PlaylistsContext", () => {
       expect(result.current.playlists.length).toBe(testPlaylists.length);
     });
 
-    afterAll(() => {
+    afterEach(() => {
       localStorage.clear();
     });
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   afterAll(() => {

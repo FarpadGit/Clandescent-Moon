@@ -37,7 +37,7 @@ const activePlaylistContext = createContext({} as contextValueType);
 export const useActivePlaylistContext = () => useContext(activePlaylistContext);
 
 export default ({ children }: { children: ReactNode }) => {
-  const { isAutosaveOn, playMode } = useAppContext();
+  const { isAutosaveOn, playMode, setLoading } = useAppContext();
   const [activePlaylist, setActivePlaylist] = useState<Playlist | null>(null);
   const [shuffledPlaylist, setShuffledPlaylist] = useState<string[]>([]);
   const [selectedVideoId, setSelectedVideoId] = useState("");
@@ -81,11 +81,13 @@ export default ({ children }: { children: ReactNode }) => {
   async function loadPlaylist(playlistName: string) {
     isNewlyLoaded.current = true;
     const LSPlaylist = localStorage.getItem(playlistName);
+
     if (!LSPlaylist) {
       setActivePlaylist({ name: playlistName, videos: [] });
       return;
     }
 
+    setLoading(true);
     const CSVPlaylist = Papa.parse<string>(LSPlaylist).data.flat();
 
     const videos = await Promise.all(
@@ -96,6 +98,7 @@ export default ({ children }: { children: ReactNode }) => {
     );
     setActivePlaylist({ name: playlistName, videos: videos });
     setShuffledPlaylist([]);
+    setLoading(false);
   }
 
   function unloadPlaylist() {

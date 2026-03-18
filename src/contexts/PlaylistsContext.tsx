@@ -30,7 +30,7 @@ const playlistsContext = createContext({} as contextValueType);
 export const usePlaylistsContext = () => useContext(playlistsContext);
 
 export default ({ children }: { children: ReactNode }) => {
-  const { setError, isAutosaveOn } = useAppContext();
+  const { setLoading, setError, isAutosaveOn } = useAppContext();
 
   const [playlists, setPlaylists] = useState<ListItemType[]>([]);
   const [loadedPlaylistId, setLoadedPlaylistId] = useState("");
@@ -42,6 +42,7 @@ export default ({ children }: { children: ReactNode }) => {
     const LSPlaylists = localStorage.getItem(LSRootKey);
     if (!LSPlaylists) return;
     try {
+      setLoading(true);
       const playlistArray = JSON.parse(LSPlaylists) as string[];
       const playlistsWithId = playlistArray.map((playlistName) => ({
         id: nanoid(),
@@ -50,6 +51,8 @@ export default ({ children }: { children: ReactNode }) => {
       setPlaylists(playlistsWithId);
     } catch (error) {
       setError();
+    } finally {
+      setLoading(false);
     }
   }, []);
 

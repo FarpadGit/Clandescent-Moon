@@ -8,6 +8,8 @@ export const playModes = ["linear", "shuffle", "random"] as const;
 export type PlayMode = (typeof playModes)[number];
 
 type contextValueType = {
+  LSLoading: boolean;
+  setLoading: (val: boolean) => void;
   LSError: boolean;
   setError: () => void;
   clearError: () => void;
@@ -27,6 +29,7 @@ const appContext = createContext({} as contextValueType);
 export const useAppContext = () => useContext(appContext);
 
 export default ({ children }: { children: ReactNode }) => {
+  const [LSLoading, setLSLoading] = useState(false);
   const [LSError, setLSError] = useState(false);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [autosave, setAutosave] = useState(true);
@@ -53,6 +56,8 @@ export default ({ children }: { children: ReactNode }) => {
   return (
     <appContext.Provider
       value={{
+        LSLoading,
+        setLoading: (val) => setLSLoading(val),
         LSError,
         setError: () => setLSError(true),
         clearError: () => setLSError(false),

@@ -78,7 +78,7 @@ describe("VerticalList", () => {
 
   it("should render input element and button for adding new items", () => {
     const addItemElement = rootElement.querySelector(
-      ".add-item"
+      ".add-item",
     ) as HTMLElement;
     expect(within(addItemElement).getByRole("textbox")).toBeTruthy();
     expect(within(addItemElement).getByRole("button")).toBeTruthy();
@@ -86,7 +86,7 @@ describe("VerticalList", () => {
 
   it("should add new item to list if input is filled out and add button is clicked", () => {
     const addItemElement = rootElement.querySelector(
-      ".add-item"
+      ".add-item",
     ) as HTMLElement;
     const input = within(addItemElement).getByRole("textbox");
     const button = within(addItemElement).getByRole("button");
@@ -119,7 +119,7 @@ describe("VerticalList", () => {
 
   it("should unselect list items if user clicks on the list outside any items", () => {
     const playlistPanel = rootElement.querySelector(
-      ".playlist-panel"
+      ".playlist-panel",
     ) as HTMLElement;
     fireEvent.click(playlistPanel);
 
@@ -133,12 +133,22 @@ describe("VerticalList", () => {
         activeIndex={-1}
         selectedIndex={-1}
         onUserAction={() => {}}
-      />
+      />,
     );
     const playButtons = screen.queryAllByTestId("play-btn");
 
     expect(playButtons.length).toBe(0);
     expect(screen.getByText(/empty/i)).toBeTruthy();
+  });
+
+  it("should display a loading messsage while reading from local storage", () => {
+    mockedUseApp.mockReturnValue({ ...mockAppObject, LSLoading: true });
+    cleanup();
+    render(componentToTest);
+    const playButtons = screen.queryAllByTestId("play-btn");
+
+    expect(playButtons.length).toBe(0);
+    expect(screen.getByText(/loading/i)).toBeTruthy();
   });
 
   it("should display an error messsage if reading from local storage failed", () => {

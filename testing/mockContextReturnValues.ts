@@ -3,6 +3,8 @@ import { vi } from "vitest";
 import { PlayMode } from "../src/contexts/AppContext";
 
 export const mockAppObject = {
+  LSLoading: false,
+  setLoading: vi.fn(),
   LSError: false,
   setError: vi.fn(),
   clearError: vi.fn(),

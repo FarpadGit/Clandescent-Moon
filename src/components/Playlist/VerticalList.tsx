@@ -26,7 +26,7 @@ export default function VerticalList({
   selectedIndex,
   onUserAction,
 }: VerticalListProps) {
-  const { LSError } = useAppContext();
+  const { LSLoading, LSError } = useAppContext();
   const { getPlaylistSize } = usePlaylistsContext();
   const [itemToAdd, setItemToAdd] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -81,9 +81,11 @@ export default function VerticalList({
         onClick={() => onUserAction("-1", "select")}
         ref={listRef}
       >
+        {LSLoading && !LSError && t("loadingMessage")}
         {LSError && t("loadError")}
-        {!LSError && activeList.length === 0 && t("emptyList")}
-        {!LSError &&
+        {!LSLoading && !LSError && activeList.length === 0 && t("emptyList")}
+        {!LSLoading &&
+          !LSError &&
           activeList.length > 0 &&
           activeList.map((item, index) => (
             <ListGroupItem

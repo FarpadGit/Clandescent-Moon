@@ -1,5 +1,6 @@
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -8,13 +9,16 @@ import {
   vi,
 } from "vitest";
 import { act, renderHook } from "@testing-library/react";
+import { useAppContext } from "./AppContext";
 import ActivePlaylistContext, {
   type useActivePlaylistContext as imported,
 } from "./ActivePlaylistContext";
 import { mockActivePlaylistContext } from "@/../testing/setupMocks";
+import { mockAppObject } from "../../testing/mockContextReturnValues";
 
 describe("ActivePlaylistContext", () => {
   let useActivePlaylistContext: typeof imported;
+  const mockedUseApp = vi.mocked(useAppContext);
   const contextWrapper = ({ children }: { children: React.ReactNode }) => (
     <ActivePlaylistContext>{children}</ActivePlaylistContext>
   );
@@ -34,6 +38,8 @@ describe("ActivePlaylistContext", () => {
   });
 
   beforeEach(() => {
+    mockedUseApp.mockReturnValue(mockAppObject);
+
     ({ result } = renderHook(() => useActivePlaylistContext(), {
       wrapper: contextWrapper,
     }));
@@ -119,11 +125,9 @@ describe("ActivePlaylistContext", () => {
     const testUrls = ["fakeurl1.com", "fakeurl2.com", "fakeurl3.com"];
     let IDs: string[];
 
-    beforeAll(() => {
-      localStorage.setItem(testPlaylistTitle, testUrls.join("\n"));
-    });
-
     beforeEach(async () => {
+      localStorage.setItem(testPlaylistTitle, testUrls.join("\n"));
+
       ({ result } = renderHook(() => useActivePlaylistContext(), {
         wrapper: contextWrapper,
       }));
@@ -241,7 +245,7 @@ describe("ActivePlaylistContext", () => {
       );
     });
 
-    afterAll(() => {
+    afterEach(() => {
       localStorage.clear();
     });
   });
