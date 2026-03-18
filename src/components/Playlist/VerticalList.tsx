@@ -89,7 +89,7 @@ export default function VerticalList({
           activeList.length > 0 &&
           activeList.map((item, index) => (
             <BS_ListGroupItem
-              ref={(el) => {
+              ref={(el: HTMLAnchorElement | null) => {
                 if (el) listItemsRef.current[item.id] = el;
                 else delete listItemsRef.current[item.id];
               }}
