@@ -41,6 +41,13 @@ export default function VerticalList({
     itemAdded.current = false;
   }, [activeList]);
 
+  function getUserMessage() {
+    if (LSError) return t("loadError");
+    if (LSLoading) return t("loadingMessage");
+    if (activeList.length === 0) return t("emptyList");
+    return undefined;
+  }
+
   function addNewItem() {
     if (!itemToAdd) return;
     setIsLoading(true);
@@ -81,12 +88,7 @@ export default function VerticalList({
         onClick={() => onUserAction("-1", "select")}
         ref={listRef}
       >
-        {LSLoading && !LSError && t("loadingMessage")}
-        {LSError && t("loadError")}
-        {!LSLoading && !LSError && activeList.length === 0 && t("emptyList")}
-        {!LSLoading &&
-          !LSError &&
-          activeList.length > 0 &&
+        {getUserMessage() ??
           activeList.map((item, index) => (
             <BS_ListGroupItem
               ref={(el: HTMLAnchorElement | null) => {
