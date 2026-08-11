@@ -88,7 +88,11 @@ export default function VerticalList({
         onClick={() => onUserAction("-1", "select")}
         ref={listRef}
       >
-        {getUserMessage() ??
+        {getUserMessage() ? (
+          <span className={`message ${LSLoading ? "loading" : ""}`}>
+            {getUserMessage()}
+          </span>
+        ) : (
           activeList.map((item, index) => (
             <BS_ListGroupItem
               ref={(el: HTMLAnchorElement | null) => {
@@ -131,7 +135,8 @@ export default function VerticalList({
                 }}
               />
             </BS_ListGroupItem>
-          ))}
+          ))
+        )}
       </BS_ListGroup>
     </>
   );
