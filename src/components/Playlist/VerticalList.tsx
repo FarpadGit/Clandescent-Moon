@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 type VerticalListProps = {
   activeList: ListItemType[];
   subtexts?: boolean;
+  canShowLoading?: boolean;
   activeIndex: number;
   selectedIndex: number;
   onUserAction: (id: string, action: userActions, payload?: string) => void;
@@ -21,6 +22,7 @@ type VerticalListProps = {
 export default function VerticalList({
   activeList,
   subtexts = false,
+  canShowLoading = true,
   activeIndex,
   selectedIndex,
   onUserAction,
@@ -43,7 +45,7 @@ export default function VerticalList({
 
   function getUserMessage() {
     if (LSError) return t("loadError");
-    if (LSLoading) return t("loadingMessage");
+    if (canShowLoading && LSLoading) return t("loadingMessage");
     if (activeList.length === 0) return t("emptyList");
     return undefined;
   }

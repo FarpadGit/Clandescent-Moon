@@ -36,6 +36,7 @@ export default function Playlist() {
           <VerticalList
             activeList={playlists}
             subtexts
+            canShowLoading={false}
             activeIndex={loadedPlaylist.index}
             selectedIndex={selectedPlaylist.index}
             onUserAction={(id, action, payload) =>
