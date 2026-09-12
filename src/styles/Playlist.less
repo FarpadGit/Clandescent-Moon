@@ -89,20 +89,20 @@
             padding: 0 4px;
 
             .message.loading {
-                @property --x {
+                @property --cx {
                     syntax: "<percentage>";
                     inherits: true;
                     initial-value: 0%;
                 }
 
-                background-image: linear-gradient(to right, var(--active-color-1) clamp(-200%, var(--x), 0%), var(--active-color-2) var(--x), var(--active-color-1));
+                background-image: linear-gradient(to right, var(--active-color-1) clamp(-200%, var(--cx), 0%), var(--active-color-2) var(--cx), var(--active-color-1));
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
                 animation: loading 3s linear infinite;
 
                 @keyframes loading {
-                    0% { --x: -200%; }
-                    100% { --x: 200%; }
+                    0% { --cx: -200%; }
+                    100% { --cx: 200%; }
                 }
             }
 
