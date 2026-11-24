@@ -10,6 +10,7 @@ import {
   mockVideoPlayerObject,
 } from "@/../testing/mockContextReturnValues";
 import { MidnightPlayerWrapper } from "@/../testing/wrappers";
+import { mockResizeObserver } from "@/../testing/setupMocks";
 
 describe("VideoPlayer", () => {
   const componentToTest = <VideoPlayer />;
@@ -19,13 +20,7 @@ describe("VideoPlayer", () => {
 
   beforeEach(() => {
     cleanup();
-
-    // ReactSlider needs ResizeObserver
-    global.ResizeObserver = vi.fn().mockReturnValue({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    });
+    mockResizeObserver();
 
     mockedUseVideoPlayer.mockReturnValue(mockVideoPlayerObject);
     mockedUseActivePlaylist.mockReturnValue(mockActivePlaylistObject);
@@ -56,7 +51,7 @@ describe("VideoPlayer", () => {
     });
 
     const videoPlayerContainer = container.querySelector(
-      ".Midnight-Player"
+      ".Midnight-Player",
     ) as HTMLElement;
     const coverImage = screen.queryByRole("img");
     const reactPlayer = videoPlayerContainer.querySelector(".player-container");

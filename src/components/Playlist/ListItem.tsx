@@ -118,7 +118,7 @@ export default function ListItem({
           click={() => onUserAction("move-up")}
           onLongPress={() => {
             onUserAction("move-to-top");
-            setTimeout(() => scrollIntoView?.(), 0);
+            setTimeout(() => scrollIntoView?.(), 1);
           }}
           disabled={isEditMode || isFirst}
           title={t("videos.controls.moveUpButton")}
@@ -134,7 +134,7 @@ export default function ListItem({
           click={() => onUserAction("move-down")}
           onLongPress={() => {
             onUserAction("move-to-bottom");
-            setTimeout(() => scrollIntoView?.(), 0);
+            setTimeout(() => scrollIntoView?.(), 1);
           }}
           disabled={isEditMode || isLast}
           title={t("videos.controls.moveDownButton")}
@@ -170,7 +170,7 @@ function Button({
   const [pressProgress, setPressProgress] = useState<number | undefined>(
     undefined,
   );
-  const intervalHandle = useRef<NodeJS.Timeout>();
+  const intervalHandle = useRef<NodeJS.Timeout>(undefined);
   const pressCancelled = useRef(false);
 
   function handleLongPress() {

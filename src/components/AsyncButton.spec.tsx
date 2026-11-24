@@ -7,7 +7,13 @@ import {
   it,
   vi,
 } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 
 import AsyncButton from "./AsyncButton";
 import "@/i18next/i18next.ts";
@@ -42,7 +48,7 @@ describe("AsyncButton", () => {
 
     it("should render loading text if clicked", async () => {
       fireEvent.click(screen.getByRole("button"));
-      await vi.advanceTimersByTimeAsync(1000);
+      await act(async () => await vi.advanceTimersByTimeAsync(1000));
 
       expect(screen.queryByText("Uncontrolled Mock Button")).toBeFalsy();
       expect(screen.getByTestId("loading")).toBeTruthy();
@@ -50,7 +56,7 @@ describe("AsyncButton", () => {
 
     it("should render 'done' text if loading finished", async () => {
       fireEvent.click(screen.getByRole("button"));
-      await vi.advanceTimersByTimeAsync(2000);
+      await act(async () => await vi.advanceTimersByTimeAsync(2000));
 
       expect(screen.queryByText("Uncontrolled Mock Button")).toBeFalsy();
       expect(screen.queryByTestId("loading")).toBeFalsy();
@@ -61,7 +67,7 @@ describe("AsyncButton", () => {
       rerender(
         <AsyncButton onClick={onErrorClick}>
           Uncontrolled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
 
       fireEvent.click(screen.getByRole("button"));
@@ -70,9 +76,14 @@ describe("AsyncButton", () => {
       expect(screen.getByTestId("error")).toBeTruthy();
     });
 
+    // vitest 5 is very wierd with timer mocking, the code below the next test should also work with this one but it doesn't.
+    // Hopefully these workarounds will not stay forever...
     it("should render component children again 1.5 seconds after loading was done (success)", async () => {
       fireEvent.click(screen.getByRole("button"));
-      await vi.advanceTimersByTimeAsync(2000 + 1500);
+      await vi.runAllTimersAsync();
+      await vi.waitFor(() => screen.getByTestId("done"));
+      await vi.runAllTimersAsync();
+      await vi.waitFor(() => screen.getByText("Uncontrolled Mock Button"));
 
       expect(screen.getByText("Uncontrolled Mock Button")).toBeTruthy();
       expect(screen.queryByTestId("loading")).toBeFalsy();
@@ -82,11 +93,11 @@ describe("AsyncButton", () => {
       rerender(
         <AsyncButton onClick={onErrorClick}>
           Uncontrolled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
 
       fireEvent.click(screen.getByRole("button"));
-      await vi.advanceTimersByTimeAsync(2000 + 1500);
+      await act(async () => await vi.advanceTimersByTimeAsync(2000 + 1500));
 
       expect(screen.getByText("Uncontrolled Mock Button")).toBeTruthy();
       expect(screen.queryByTestId("loading")).toBeFalsy();
@@ -126,7 +137,7 @@ describe("AsyncButton", () => {
       rerender(
         <AsyncButton controlled loading={true}>
           Controlled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
 
       expect(screen.queryByText("Controlled Mock Button")).toBeFalsy();
@@ -137,12 +148,12 @@ describe("AsyncButton", () => {
       rerender(
         <AsyncButton controlled loading={true}>
           Controlled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
       rerender(
         <AsyncButton controlled loading={false}>
           Controlled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
 
       expect(screen.queryByText("Controlled Mock Button")).toBeFalsy();
@@ -154,7 +165,7 @@ describe("AsyncButton", () => {
       rerender(
         <AsyncButton controlled loading={null}>
           Controlled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
 
       expect(screen.queryByText("Controlled Mock Button")).toBeFalsy();
@@ -165,15 +176,15 @@ describe("AsyncButton", () => {
       rerender(
         <AsyncButton controlled loading={true}>
           Controlled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
       rerender(
         <AsyncButton controlled loading={false}>
           Controlled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
 
-      await vi.advanceTimersByTimeAsync(1500);
+      await act(async () => await vi.advanceTimersByTimeAsync(1500));
 
       expect(screen.getByText("Controlled Mock Button")).toBeTruthy();
       expect(screen.queryByTestId("loading")).toBeFalsy();
@@ -183,10 +194,10 @@ describe("AsyncButton", () => {
       rerender(
         <AsyncButton controlled loading={null}>
           Controlled Mock Button
-        </AsyncButton>
+        </AsyncButton>,
       );
 
-      await vi.advanceTimersByTimeAsync(1500);
+      await act(async () => await vi.advanceTimersByTimeAsync(1500));
 
       expect(screen.getByText("Controlled Mock Button")).toBeTruthy();
       expect(screen.queryByTestId("loading")).toBeFalsy();

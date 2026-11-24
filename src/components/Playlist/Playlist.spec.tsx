@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 
 import Playlist from "./Playlist";
 import "@/i18next/i18next.ts";
@@ -43,19 +43,16 @@ describe("Playlist", () => {
   });
 
   it("should render the playlist component", () => {
-    const addItemElements = Array.from(
-      rootElement.querySelectorAll(".add-item")
-    );
+    const toolbarElement =
+      rootElement.querySelector<HTMLElement>(".toolbar-tab");
 
     expect(rootElement.querySelector(".playlist")).toBeTruthy();
     expect(rootElement.querySelectorAll(".playlist-panel").length).toBe(2);
     expect(rootElement.querySelector(".options-panel")).toBeTruthy();
     expect(screen.getAllByRole("tab").length).toBe(3);
     expect(screen.getAllByRole("tabpanel").length).toBe(3);
-    expect(addItemElements.length).toBe(2);
-    expect(addItemElements.every((el) => el.querySelector("input"))).toBe(true);
-    expect(
-      addItemElements.every((el) => el.querySelector(".playlist-button"))
-    ).toBe(true);
+    expect(toolbarElement).toBeTruthy();
+    expect(within(toolbarElement!).getByRole("textbox")).toBeTruthy();
+    expect(within(toolbarElement!).getAllByRole("button").length).toBe(2);
   });
 });

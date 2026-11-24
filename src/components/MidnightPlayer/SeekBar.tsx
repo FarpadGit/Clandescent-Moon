@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
-import ReactSlider from "react-slider";
+import ReactSlider from "@/components/MidnightPlayer/ReactSlider";
 
 export function SeekBar({ duration }: { duration: number }) {
   const {
@@ -31,7 +31,7 @@ export function SeekBar({ duration }: { duration: number }) {
     if (position > width - thumbSize) correctedPosition = correctedWidth;
     //estimate the slider's value (between 0 and [fidelity]) based on the corrected position and width
     const sliderValue = Math.round(
-      (fidelity * correctedPosition) / correctedWidth
+      (fidelity * correctedPosition) / correctedWidth,
     );
     //project the estimated value to a time value between 0 and [duration] seconds
     const time = (duration * sliderValue) / fidelity;
@@ -60,7 +60,7 @@ export function SeekBar({ duration }: { duration: number }) {
         max={fidelity}
         value={videoState.playedFraction * fidelity}
         onBeforeChange={() => seekStart()}
-        onAfterChange={(value: number) => seekEnd(value)}
+        onAfterChange={(value: number | number[]) => seekEnd(value as number)}
         onSliderClick={(value: number) => handleSeek(value)}
       />
     </div>

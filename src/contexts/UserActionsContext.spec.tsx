@@ -24,6 +24,8 @@ import { AllWrapper } from "../../testing/wrappers";
 import FileSaver from "file-saver";
 import LZString from "lz-string";
 
+vi.mock("file-saver");
+
 describe("UserActionsContext", () => {
   let useUserActionsContext: typeof imported;
   let result: { current: ReturnType<typeof imported> };
@@ -216,6 +218,22 @@ describe("UserActionsContext", () => {
         testPlaylistID,
       );
     });
+
+    it("should relay reversing playlist order", () => {
+      result.current.handleUserActions(
+        "playlist",
+        testPlaylistID,
+        "reverse-list",
+      );
+
+      expect(mockPlaylistsObject.reversePlaylists).toHaveBeenCalled();
+    });
+
+    it("should relay sorting playlists alphabetically", () => {
+      result.current.handleUserActions("playlist", testPlaylistID, "sort");
+
+      expect(mockPlaylistsObject.sortPlaylists).toHaveBeenCalled();
+    });
   });
 
   describe("handleUserActions - video", () => {
@@ -376,6 +394,18 @@ describe("UserActionsContext", () => {
         testVideoID,
       );
     });
+
+    it("should relay reversing video order", () => {
+      result.current.handleUserActions("video", testVideoID, "reverse-list");
+
+      expect(mockActivePlaylistObject.reverseVideos).toHaveBeenCalled();
+    });
+
+    it("should relay sorting videos alphabetically", () => {
+      result.current.handleUserActions("video", testVideoID, "sort");
+
+      expect(mockActivePlaylistObject.sortVideos).toHaveBeenCalled();
+    });
   });
 
   // these tests actually use preexisting playlist data both in Local Storage and in contexts to import/export
@@ -395,7 +425,6 @@ describe("UserActionsContext", () => {
       },
     ];
 
-    vi.mock("file-saver");
     const saveAsSpy = vi.mocked(FileSaver).saveAs;
 
     beforeAll(() => {

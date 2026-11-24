@@ -10,6 +10,7 @@ import {
   mockVideoPlayerObject,
 } from "@/../testing/mockContextReturnValues";
 import { MidnightPlayerWrapper } from "@/../testing/wrappers";
+import { mockResizeObserver } from "@/../testing/setupMocks";
 
 describe("SeekBar", () => {
   let rootElement: HTMLElement;
@@ -21,13 +22,7 @@ describe("SeekBar", () => {
 
   beforeEach(() => {
     cleanup();
-
-    // ReactSlider needs ResizeObserver
-    global.ResizeObserver = vi.fn().mockReturnValue({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    });
+    mockResizeObserver();
 
     mockedUseVideoPlayer.mockReturnValue(mockVideoPlayerObject);
     mockedUseActivePlaylist.mockReturnValue(mockActivePlaylistObject);
@@ -39,7 +34,7 @@ describe("SeekBar", () => {
 
   it("should display a seekbar with no tooltip", () => {
     const container = rootElement.querySelector(
-      ".seeker-container"
+      ".seeker-container",
     ) as HTMLElement;
     const seeker = container.querySelector(".seeker") as HTMLElement;
     const tooltip = container.querySelector(".seeker-tooltip") as HTMLElement;
@@ -51,7 +46,7 @@ describe("SeekBar", () => {
 
   it("should display tooltip on mouse over and remove it on mouse leave", () => {
     const container = rootElement.querySelector(
-      ".seeker-container"
+      ".seeker-container",
     ) as HTMLElement;
     let tooltip = rootElement.querySelector(".seeker-tooltip") as HTMLElement;
     expect(tooltip).toBeFalsy();

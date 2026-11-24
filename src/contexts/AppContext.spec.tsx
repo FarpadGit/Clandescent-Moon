@@ -8,7 +8,10 @@ import {
   vi,
 } from "vitest";
 import { act, renderHook } from "@testing-library/react";
-import AppContext, { type useAppContext as imported } from "./AppContext";
+import AppContext, {
+  playModes,
+  type useAppContext as imported,
+} from "./AppContext";
 import { mockAppContext } from "@/../testing/setupMocks";
 
 describe("AppContext", () => {
@@ -82,28 +85,12 @@ describe("AppContext", () => {
     expect(result.current.isAutocorrectOn).toBe(false);
   });
 
-  it("should change play mode to 'Linear'", () => {
+  it.each(playModes)("should change play mode to '%s'", (playmode) => {
     act(() => {
-      result.current.setPlayMode("linear");
+      result.current.setPlayMode(playmode);
     });
 
-    expect(result.current.playMode).toBe("linear");
-  });
-
-  it("should change play mode to 'Shuffle'", () => {
-    act(() => {
-      result.current.setPlayMode("shuffle");
-    });
-
-    expect(result.current.playMode).toBe("shuffle");
-  });
-
-  it("should change play mode to 'Random'", () => {
-    act(() => {
-      result.current.setPlayMode("random");
-    });
-
-    expect(result.current.playMode).toBe("random");
+    expect(result.current.playMode).toBe(playmode);
   });
 
   it("should toggle local/external import and export", () => {

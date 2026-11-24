@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { ListItemType, useAppContext } from "@/contexts/AppContext";
 import { usePlaylistsContext } from "@/contexts/PlaylistsContext";
 import { userActions } from "@/contexts/UserActionsContext";
-import ListItem from "./ListItem";
+import ListItem from "@/components/Playlist//ListItem";
+import ListToolbar from "@/components/Playlist/ListToolbar";
 import {
   ListGroup as BS_ListGroup,
   ListGroupItem as BS_ListGroupItem,
-  Spinner,
 } from "react-bootstrap";
-import { FiPlus } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 type VerticalListProps = {
@@ -29,7 +28,6 @@ export default function VerticalList({
 }: VerticalListProps) {
   const { LSLoading, LSError } = useAppContext();
   const { getPlaylistSize } = usePlaylistsContext();
-  const [itemToAdd, setItemToAdd] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const listItemsRef = useRef<{ [key: string]: HTMLAnchorElement }>({});
@@ -50,14 +48,6 @@ export default function VerticalList({
     return undefined;
   }
 
-  function addNewItem() {
-    if (!itemToAdd) return;
-    setIsLoading(true);
-    onUserAction("", "add", itemToAdd);
-    setItemToAdd("");
-    itemAdded.current = true;
-  }
-
   function handleSelect(index: number, item: ListItemType) {
     if (index === selectedIndex) onUserAction(item.id, "play");
     else onUserAction(item.id, "select");
@@ -65,25 +55,13 @@ export default function VerticalList({
 
   return (
     <>
-      {/* Add new item input */}
-      <div className="add-item">
-        <input
-          type="text"
-          className="w-75"
-          value={itemToAdd}
-          disabled={isLoading}
-          onChange={(e) => setItemToAdd(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") addNewItem();
-          }}
-        />
-        {isLoading && (
-          <Spinner size="sm" style={{ color: "var(--border-color)" }} />
-        )}
-        <button className="playlist-button" onClick={() => addNewItem()}>
-          <FiPlus />
-        </button>
-      </div>
+      {/* Toolbar to add new items or sort list */}
+      <ListToolbar
+        onItemAdded={() => (itemAdded.current = true)}
+        onUserAction={onUserAction}
+        isLoading={isLoading}
+        onLoading={() => setIsLoading(true)}
+      />
       {/* Bootstrap vertical list */}
       <BS_ListGroup
         className="playlist-panel rounded-0"

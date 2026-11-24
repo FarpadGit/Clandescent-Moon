@@ -23,7 +23,7 @@ const {
 });
 
 export function mockAppContext() {
-  vi.mock(AppContextPath, async () => {
+  vi.doMock(AppContextPath, async () => {
     const actual = await vi.importActual(AppContextPath);
     return {
       ...actual,
@@ -33,7 +33,7 @@ export function mockAppContext() {
 }
 
 export function mockPlaylistsContext() {
-  vi.mock(PlaylistsContextPath, async () => {
+  vi.doMock(PlaylistsContextPath, async () => {
     const actual = await vi.importActual(PlaylistsContextPath);
     return {
       ...actual,
@@ -43,7 +43,7 @@ export function mockPlaylistsContext() {
 }
 
 export function mockActivePlaylistContext() {
-  vi.mock(ActivePlaylistContextPath, async () => {
+  vi.doMock(ActivePlaylistContextPath, async () => {
     const actual = await vi.importActual(ActivePlaylistContextPath);
     return {
       ...actual,
@@ -53,7 +53,7 @@ export function mockActivePlaylistContext() {
 }
 
 export function mockVideoPlayerContext() {
-  vi.mock(VideoPlayerContextPath, async () => {
+  vi.doMock(VideoPlayerContextPath, async () => {
     const actual = await vi.importActual(VideoPlayerContextPath);
     return {
       ...actual,
@@ -63,7 +63,7 @@ export function mockVideoPlayerContext() {
 }
 
 export function mockUserActionsContext() {
-  vi.mock(UserActionsContextPath, async () => {
+  vi.doMock(UserActionsContextPath, async () => {
     const actual = await vi.importActual(UserActionsContextPath);
     return {
       ...actual,
@@ -73,9 +73,20 @@ export function mockUserActionsContext() {
 }
 
 export function mockuseMediaQueryHook() {
-  vi.mock("../src/hooks/useMediaQuery", () => ({
+  vi.doMock("../src/hooks/useMediaQuery", () => ({
     default: () => ({ LG: true }),
   }));
+}
+
+// ReactSlider needs ResizeObserver
+export function mockResizeObserver() {
+  global.ResizeObserver = vi.fn(
+    class {
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    },
+  );
 }
 
 mockAppContext();

@@ -22,7 +22,7 @@ type videoStateType = {
 };
 
 type contextValueType = {
-  videoPlayer: React.RefObject<ReactPlayer>;
+  videoPlayer: React.RefObject<ReactPlayer | null>;
   videoState: videoStateType;
   seekerFidelity: number;
   playPause: () => void;
@@ -47,7 +47,7 @@ export const useVideoPlayerContext = () => useContext(videoPlayerContext);
 export default ({ children }: { children: ReactNode }) => {
   const { currentlyPlaying, playNext } = useActivePlaylistContext();
 
-  const videoPlayer = useRef<ReactPlayer>(null);
+  const videoPlayer = useRef<ReactPlayer | null>(null);
   const [videoState, setVideoState] = useState<videoStateType>({
     playing: true,
     muted: false,
@@ -148,7 +148,8 @@ export default ({ children }: { children: ReactNode }) => {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
     const seconds = date.getUTCSeconds().toString().padStart(2, "0");
-    if (hours) return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds}`;
+    if (hours)
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds}`;
     else return `${minutes}:${seconds}`;
   };
 

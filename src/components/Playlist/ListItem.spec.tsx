@@ -150,7 +150,8 @@ describe("ListItem", () => {
 
     it('should call onUserAction with "move-to-top" and request a scroll into view if item was moved to the top of list', async () => {
       fireEvent.pointerDown(screen.getByTestId("up-btn"));
-      await vi.advanceTimersByTimeAsync(1000);
+      await vi.waitFor(() => screen.getByTestId("charge-circle"));
+      await vi.advanceTimersByTimeAsync(10);
 
       expect(onUserActionSpy).toHaveBeenCalledWith("move-to-top");
       expect(onScrollRequestSpy).toHaveBeenCalled();
@@ -158,7 +159,8 @@ describe("ListItem", () => {
 
     it('should call onUserAction with "move-to-bottom" and request a scroll into view if item was moved to the bottom of list', async () => {
       fireEvent.pointerDown(screen.getByTestId("down-btn"));
-      await vi.advanceTimersByTimeAsync(1000);
+      await vi.waitFor(() => screen.getByTestId("charge-circle"));
+      await vi.advanceTimersByTimeAsync(10);
 
       expect(onUserActionSpy).toHaveBeenCalledWith("move-to-bottom");
       expect(onScrollRequestSpy).toHaveBeenCalled();
@@ -167,7 +169,8 @@ describe("ListItem", () => {
       'should diplay a charging ring if "move-up" or "move-down" button is held down',
       async (testid) => {
         fireEvent.pointerDown(screen.getByTestId(testid));
-        await vi.advanceTimersByTimeAsync(510);
+
+        await vi.waitFor(() => screen.getByTestId("charge-circle"));
 
         expect(screen.getByTestId("charge-circle")).toBeTruthy();
       },

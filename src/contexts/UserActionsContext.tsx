@@ -17,6 +17,8 @@ export type userActions =
   | "move-down"
   | "move-to-top"
   | "move-to-bottom"
+  | "sort"
+  | "reverse-list"
   | "play";
 
 type ListType = "playlist" | "video";
@@ -54,6 +56,8 @@ export default ({ children }: { children: ReactNode }) => {
     swapPlaylists,
     pushPlaylistToTop,
     pushPlaylistToBottom,
+    reversePlaylists,
+    sortPlaylists,
   } = usePlaylistsContext();
   const {
     activePlaylist,
@@ -70,6 +74,8 @@ export default ({ children }: { children: ReactNode }) => {
     swapVideos,
     pushVideoToTop,
     pushVideoToBottom,
+    reverseVideos,
+    sortVideos,
   } = useActivePlaylistContext();
   const { videoState, playPause } = useVideoPlayerContext();
 
@@ -150,8 +156,18 @@ export default ({ children }: { children: ReactNode }) => {
           }
         }
         break;
+      case "reverse-list":
+        {
+          reversePlaylists();
+        }
+        break;
+      case "sort":
+        {
+          sortPlaylists();
+        }
+        break;
       default:
-        return;
+        throw new Error(action satisfies never);
     }
   }
 
@@ -216,8 +232,18 @@ export default ({ children }: { children: ReactNode }) => {
           if (id === currentlyPlaying.id) playFirstVideo();
         }
         break;
+      case "reverse-list":
+        {
+          reverseVideos();
+        }
+        break;
+      case "sort":
+        {
+          sortVideos();
+        }
+        break;
       default:
-        return;
+        throw new Error(action satisfies never);
     }
   }
 

@@ -214,6 +214,61 @@ describe("ActivePlaylistContext", () => {
       });
     });
 
+    it("should reverse the order of videos", () => {
+      act(() => {
+        result.current.reverseVideos();
+      });
+
+      expect(result.current.activePlaylist?.videos[0]).toEqual({
+        id: IDs[2],
+        text: fetchReturnValue,
+        url: testUrls[2],
+      });
+      expect(result.current.activePlaylist?.videos[1]).toEqual({
+        id: IDs[1],
+        text: fetchReturnValue,
+        url: testUrls[1],
+      });
+      expect(result.current.activePlaylist?.videos[2]).toEqual({
+        id: IDs[0],
+        text: fetchReturnValue,
+        url: testUrls[0],
+      });
+    });
+
+    it("should sort videos aplhabetically", () => {
+      const videoText = (i: number) =>
+        i == 0
+          ? "Fake Video title: Charlie"
+          : i == 1
+            ? "Fake Video title: Alice"
+            : "Fake Video title: Bob";
+      act(() => {
+        result.current.activePlaylist!.videos =
+          result.current.activePlaylist!.videos.map((v, i) => ({
+            ...v,
+            text: videoText(i),
+          }));
+        result.current.sortVideos();
+      });
+
+      expect(result.current.activePlaylist?.videos[0]).toEqual({
+        id: IDs[1],
+        text: videoText(1),
+        url: testUrls[1],
+      });
+      expect(result.current.activePlaylist?.videos[1]).toEqual({
+        id: IDs[2],
+        text: videoText(2),
+        url: testUrls[2],
+      });
+      expect(result.current.activePlaylist?.videos[2]).toEqual({
+        id: IDs[0],
+        text: videoText(0),
+        url: testUrls[0],
+      });
+    });
+
     it("should move a video to be the first element", () => {
       act(() => {
         result.current.pushVideoToTop(2);

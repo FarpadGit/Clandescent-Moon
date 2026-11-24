@@ -1,11 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  within,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
 import VerticalList from "./VerticalList";
 import "@/i18next/i18next.ts";
@@ -76,25 +70,11 @@ describe("VerticalList", () => {
     }));
   });
 
-  it("should render input element and button for adding new items", () => {
-    const addItemElement = rootElement.querySelector(
-      ".add-item",
-    ) as HTMLElement;
-    expect(within(addItemElement).getByRole("textbox")).toBeTruthy();
-    expect(within(addItemElement).getByRole("button")).toBeTruthy();
-  });
+  it("should render toolbar element", () => {
+    const toolbarElement =
+      rootElement.querySelector<HTMLElement>(".toolbar-slider");
 
-  it("should add new item to list if input is filled out and add button is clicked", () => {
-    const addItemElement = rootElement.querySelector(
-      ".add-item",
-    ) as HTMLElement;
-    const input = within(addItemElement).getByRole("textbox");
-    const button = within(addItemElement).getByRole("button");
-
-    fireEvent.input(input, { target: { value: "New Fake Item" } });
-    fireEvent.click(button);
-
-    expect(userActionSpy).toHaveBeenCalledWith("", "add", "New Fake Item");
+    expect(toolbarElement).toBeTruthy();
   });
 
   it("should render list items", () => {

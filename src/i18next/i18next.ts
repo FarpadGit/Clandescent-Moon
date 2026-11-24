@@ -81,12 +81,16 @@ i18n.use(initReactI18next).init({
             title: "Current playback mode",
             mode: {
               linear: "Linear mode",
+              reverse: "Reverse mode",
               shuffle: "Shuffle mode",
               random: "Random mode",
             },
             description: `<strong>Linear Mode:</strong> 
           Videos will be played from top to bottom, in the order they appear on
           the list.
+          <br />
+          <strong>Reverse Mode:</strong> 
+          Videos will be played from bottom to top, in reverse order.
           <br />
           <strong>Shuffle Mode:</strong> 
           Videos will be played in a random order but it will go through the
@@ -141,6 +145,10 @@ i18n.use(initReactI18next).init({
             description: `Load one of our premade playlists into your collection. (Just make
           sure you don't already have a playlist with the same exact name, it
           will be overwritten.)`,
+          },
+          toolbarActions: {
+            "reverse-list": "Reverse list items",
+            sort: "Sort list alphabetically",
           },
         },
       },
@@ -213,11 +221,15 @@ i18n.use(initReactI18next).init({
             title: "Aktuális lejátszási mód",
             mode: {
               linear: "Lineáris mód",
+              reverse: "Fordított mód",
               shuffle: "Kevert mód",
               random: "Random mód",
             },
             description: `<strong>Lineáris mód:</strong> 
           A videókat egymás után játssza le fentről lefelé, ahogy a listában szerepelnek.
+          <br />
+          <strong>Fordított mód:</strong> 
+          A videókat fordított sorrendben játssza le lentről felfelé haladva.
           <br />
           <strong>Kevert mód (Shuffle):</strong> 
           A videókat véletlen sorrendben játssza le, de az egész lejátszási listán végigmegy.
@@ -267,6 +279,10 @@ i18n.use(initReactI18next).init({
             label: `"{{name}}" betöltése`,
             description: `Töltsd be valamelyik előre összerakott lejátszási listánkat a kollekciódba. 
             (Csak győződj meg róla, hogy nem létezik-e már egy ugyanilyen nevű listád, ezeket felül fogja írni.)`,
+          },
+          toolbarActions: {
+            "reverse-list": "Lista megfordítása",
+            sort: "Lista ábécé sorrendbe rendezése",
           },
         },
       },

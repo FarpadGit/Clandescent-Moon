@@ -163,6 +163,59 @@ describe("PlaylistsContext", () => {
       });
     });
 
+    it("should reverse the order of playlists", () => {
+      act(() => {
+        result.current.reversePlaylists();
+      });
+
+      expect(result.current.playlists[0]).toEqual({
+        id: IDs[2],
+        text: testPlaylists[2],
+      });
+      expect(result.current.playlists[1]).toEqual({
+        id: IDs[1],
+        text: testPlaylists[1],
+      });
+      expect(result.current.playlists[2]).toEqual({
+        id: IDs[0],
+        text: testPlaylists[0],
+      });
+    });
+
+    it("should sort playlists aplhabetically", () => {
+      const newPlaylists = [
+        "Fake Playlist: Charlie",
+        "Fake Playlist: Alice",
+        "Fake Playlist: Bob",
+      ];
+      act(() => {
+        result.current.editPlaylist(IDs[0], newPlaylists[0]);
+      });
+      act(() => {
+        result.current.editPlaylist(IDs[1], newPlaylists[1]);
+      });
+      act(() => {
+        result.current.editPlaylist(IDs[2], newPlaylists[2]);
+      });
+
+      act(() => {
+        result.current.sortPlaylists();
+      });
+
+      expect(result.current.playlists[0]).toEqual({
+        id: IDs[1],
+        text: newPlaylists[1],
+      });
+      expect(result.current.playlists[1]).toEqual({
+        id: IDs[2],
+        text: newPlaylists[2],
+      });
+      expect(result.current.playlists[2]).toEqual({
+        id: IDs[0],
+        text: newPlaylists[0],
+      });
+    });
+
     it("should should move a playlist to be the first element", () => {
       act(() => {
         result.current.pushPlaylistToTop(2);

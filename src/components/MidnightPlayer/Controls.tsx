@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useActivePlaylistContext } from "@/contexts/ActivePlaylistContext";
 import { useVideoPlayerContext } from "@/contexts/VideoPlayerContext";
 import useMediaQuery from "@/hooks/useMediaQuery";
@@ -13,7 +13,7 @@ import {
   PiGearBold,
 } from "react-icons/pi";
 import { FiVolumeX, FiVolume1, FiVolume2 } from "react-icons/fi";
-import ReactSlider from "react-slider";
+import ReactSlider from "@/components/MidnightPlayer/ReactSlider";
 import { useTranslation } from "react-i18next";
 
 export default function Controls() {
@@ -29,6 +29,7 @@ export default function Controls() {
   } = useVideoPlayerContext();
   const { currentlyPlaying } = useActivePlaylistContext();
   const [volumeTouched, setVolumeTouched] = useState(false);
+  const volumeSlider = useRef<ReactSlider>(null);
 
   const currentTime = videoPlayer.current?.getCurrentTime() ?? 0;
   const duration = videoPlayer.current?.getDuration() ?? 0;
@@ -133,10 +134,14 @@ export default function Controls() {
             </div>
             {/* Volume Slider */}
             <ReactSlider
+              ref={volumeSlider}
               min={0}
               max={100}
               className={`volume-slider ${volumeTouched ? "touched" : ""}`}
-              onChange={(value: number) => changeVolume(value)}
+              onChange={(value: number | number[]) =>
+                changeVolume(value as number)
+              }
+              onAfterChange={() => volumeSlider.current?.unfocus()}
               value={videoState.muted ? 0 : videoState.volume * 100}
             />
           </div>

@@ -7,6 +7,13 @@ import {
   useRef,
 } from "react";
 import { ListItemType, LSRootKey, useAppContext } from "./AppContext";
+import {
+  swapItems,
+  sortList,
+  reverseList,
+  pushItemToTop,
+  pushItemToBottom,
+} from "@/utils/listOps";
 import Papa from "papaparse";
 import { nanoid } from "nanoid";
 
@@ -24,6 +31,8 @@ type contextValueType = {
   swapPlaylists: (index1: number, index2: number) => void;
   pushPlaylistToTop: (index: number) => void;
   pushPlaylistToBottom: (index: number) => void;
+  reversePlaylists: () => void;
+  sortPlaylists: () => void;
 };
 
 const playlistsContext = createContext({} as contextValueType);
@@ -105,28 +114,31 @@ export default ({ children }: { children: ReactNode }) => {
 
   function swapPlaylists(index1: number, index2: number) {
     if (playlists.length === 0) return;
-    let temp = [...playlists];
-    [temp[index1], temp[index2]] = [temp[index2], temp[index1]];
-    setPlaylists(temp);
+    const newPlaylists = swapItems(playlists, index1, index2);
+    setPlaylists(newPlaylists);
+  }
+
+  function reversePlaylists() {
+    if (playlists.length < 2) return;
+    const newPlaylists = reverseList(playlists);
+    setPlaylists(newPlaylists);
+  }
+
+  function sortPlaylists() {
+    if (playlists.length < 2) return;
+    const newPlaylists = sortList(playlists);
+    setPlaylists(newPlaylists);
   }
 
   function pushPlaylistToTop(index: number) {
     if (playlists.length === 0 || playlists[index] == undefined) return;
-    const newPlaylists = [
-      playlists[index],
-      ...playlists.filter((_, i) => i !== index),
-    ];
-
+    const newPlaylists = pushItemToTop(playlists, index);
     setPlaylists(newPlaylists);
   }
 
   function pushPlaylistToBottom(index: number) {
     if (playlists.length === 0 || playlists[index] == undefined) return;
-    const newPlaylists = [
-      ...playlists.filter((_, i) => i !== index),
-      playlists[index],
-    ];
-
+    const newPlaylists = pushItemToBottom(playlists, index);
     setPlaylists(newPlaylists);
   }
 
@@ -177,6 +189,8 @@ export default ({ children }: { children: ReactNode }) => {
     swapPlaylists,
     pushPlaylistToTop,
     pushPlaylistToBottom,
+    reversePlaylists,
+    sortPlaylists,
   };
 
   return (

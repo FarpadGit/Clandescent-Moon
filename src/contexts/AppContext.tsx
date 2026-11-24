@@ -4,7 +4,7 @@ export const LSRootKey = "Clandescent Moon playlists";
 
 export type ListItemType = { id: string; text: string; url?: string };
 
-export const playModes = ["linear", "shuffle", "random"] as const;
+export const playModes = ["linear", "reverse", "shuffle", "random"] as const;
 export type PlayMode = (typeof playModes)[number];
 
 type contextValueType = {

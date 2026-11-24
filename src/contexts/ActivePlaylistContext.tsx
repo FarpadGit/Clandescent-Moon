@@ -7,6 +7,13 @@ import {
   useRef,
 } from "react";
 import { ListItemType, useAppContext } from "./AppContext";
+import {
+  swapItems,
+  sortList,
+  reverseList,
+  pushItemToTop,
+  pushItemToBottom,
+} from "@/utils/listOps";
 import Papa from "papaparse";
 import { nanoid } from "nanoid";
 
@@ -31,6 +38,8 @@ type contextValueType = {
   swapVideos: (index1: number, index2: number) => void;
   pushVideoToTop: (index: number) => void;
   pushVideoToBottom: (index: number) => void;
+  reverseVideos: () => void;
+  sortVideos: () => void;
 };
 
 const activePlaylistContext = createContext({} as contextValueType);
@@ -133,19 +142,37 @@ export default ({ children }: { children: ReactNode }) => {
 
   function playNext() {
     if (!activePlaylist) return;
-    if (playMode === "linear") {
-      const currentIndex = getIndex(currentlyPlayingId);
-      if (currentIndex === activePlaylist.videos.length - 1) playFirstVideo();
-      else playVideo(activePlaylist.videos[currentIndex + 1].id);
-    } else if (playMode === "shuffle") playNextInShuffle();
-    else if (playMode === "random") {
-      let randomIndex = -1;
-      do {
-        randomIndex = Math.floor(
-          Math.random() * (activePlaylist.videos.length - 1),
-        );
-      } while (randomIndex === getIndex(currentlyPlayingId));
-      playVideo(activePlaylist.videos[randomIndex].id);
+    const videos = activePlaylist.videos;
+
+    switch (playMode) {
+      case "linear":
+        {
+          const currentIndex = getIndex(currentlyPlayingId);
+          if (currentIndex === videos.length - 1) playFirstVideo();
+          else playVideo(videos[currentIndex + 1].id);
+        }
+        break;
+      case "reverse":
+        {
+          const currentIndex = getIndex(currentlyPlayingId);
+          if (currentIndex === 0) playVideo(videos[videos.length - 1].id);
+          else playVideo(videos[currentIndex - 1].id);
+        }
+        break;
+      case "shuffle":
+        playNextInShuffle();
+        break;
+      case "random":
+        {
+          let randomIndex = -1;
+          do {
+            randomIndex = Math.floor(Math.random() * (videos.length - 1));
+          } while (randomIndex === getIndex(currentlyPlayingId));
+          playVideo(videos[randomIndex].id);
+        }
+        break;
+      default:
+        throw new Error(playMode satisfies never);
     }
   }
 
@@ -189,25 +216,32 @@ export default ({ children }: { children: ReactNode }) => {
 
   function swapVideos(index1: number, index2: number) {
     if (!activePlaylist) return;
-    let videos = activePlaylist.videos;
-    [videos[index1], videos[index2]] = [videos[index2], videos[index1]];
+    const videos = swapItems(activePlaylist.videos, index1, index2);
 
+    setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
+  }
+
+  function reverseVideos() {
+    if (!activePlaylist || activePlaylist.videos.length < 2) return;
+    const videos = reverseList(activePlaylist.videos);
+    setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
+  }
+
+  function sortVideos() {
+    if (!activePlaylist || activePlaylist.videos.length < 2) return;
+    const videos = sortList(activePlaylist.videos);
     setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
   }
 
   function pushVideoToTop(index: number) {
     if (!activePlaylist || activePlaylist.videos[index] == undefined) return;
-    let videos = activePlaylist.videos.filter((_, i) => i !== index);
-    videos = [activePlaylist.videos[index], ...videos];
-
+    const videos = pushItemToTop(activePlaylist.videos, index);
     setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
   }
 
   function pushVideoToBottom(index: number) {
     if (!activePlaylist || activePlaylist.videos[index] == undefined) return;
-    let videos = activePlaylist.videos.filter((_, i) => i !== index);
-    videos = [...videos, activePlaylist.videos[index]];
-
+    const videos = pushItemToBottom(activePlaylist.videos, index);
     setActivePlaylist((prev) => ({ name: prev!.name, videos: videos }));
   }
 
@@ -276,6 +310,8 @@ export default ({ children }: { children: ReactNode }) => {
     swapVideos,
     pushVideoToTop,
     pushVideoToBottom,
+    reverseVideos,
+    sortVideos,
   };
 
   return (

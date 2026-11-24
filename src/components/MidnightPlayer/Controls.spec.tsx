@@ -16,6 +16,7 @@ import {
   mockVideoPlayerObject,
 } from "@/../testing/mockContextReturnValues";
 import { MidnightPlayerWrapper } from "@/../testing/wrappers";
+import { mockResizeObserver } from "@/../testing/setupMocks";
 
 describe("Controls", () => {
   let rootElement: HTMLElement;
@@ -27,13 +28,7 @@ describe("Controls", () => {
 
   beforeEach(() => {
     cleanup();
-
-    // ReactSlider needs ResizeObserver
-    global.ResizeObserver = vi.fn().mockReturnValue({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    });
+    mockResizeObserver();
 
     mockedUseVideoPlayer.mockReturnValue(mockVideoPlayerObject);
     mockedUseActivePlaylist.mockReturnValue(mockActivePlaylistObject);
@@ -48,7 +43,7 @@ describe("Controls", () => {
     const midContainer = screen.getByTestId("mid-container");
     const bottomContainer = rootElement.querySelector(".bottom-container");
     const timeDisplay = rootElement.querySelector(
-      ".time-display"
+      ".time-display",
     ) as HTMLElement;
     const controlBox = rootElement.querySelector(".control-box") as HTMLElement;
 
@@ -89,7 +84,7 @@ describe("Controls", () => {
       const container = screen.getByTestId("mid-container");
 
       expect(
-        within(container).queryByTestId("controls-play-large")
+        within(container).queryByTestId("controls-play-large"),
       ).toBeTruthy();
     });
 
