@@ -8,35 +8,39 @@ import { type IconType } from "react-icons";
 const toolbarActions = ["reverse-list", "sort"] as const;
 
 type ListToolbarProps = {
-  onUserAction: (id: string, action: userActions, payload?: string) => void;
+  onUserAction: (
+    id: string,
+    action: userActions,
+    payload?: string,
+  ) => Promise<void>;
   onItemAdded: () => void;
-  isLoading: boolean;
-  onLoading: () => void;
 };
 export default function ListToolbar({
   onUserAction,
   onItemAdded,
-  isLoading,
-  onLoading,
 }: ListToolbarProps) {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [selectedAction, setSelectedAction] = useState<
     (typeof toolbarActions)[number] | null
   >("reverse-list");
   const [itemToAdd, setItemToAdd] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
   async function addNewItem() {
     if (!itemToAdd) return;
-    onLoading();
-    onUserAction("", "add", itemToAdd);
+    setIsLoading(true);
+    await onUserAction("", "add", itemToAdd);
     setItemToAdd("");
     onItemAdded();
+    setIsLoading(false);
   }
 
-  function sortList() {
+  async function sortList() {
     if (!selectedAction) return;
-    onUserAction("", selectedAction);
+    setIsLoading(true);
+    await onUserAction("", selectedAction);
+    setIsLoading(false);
   }
 
   return (

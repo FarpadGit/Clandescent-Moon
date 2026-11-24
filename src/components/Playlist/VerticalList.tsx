@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ListItemType, useAppContext } from "@/contexts/AppContext";
 import { usePlaylistsContext } from "@/contexts/PlaylistsContext";
 import { userActions } from "@/contexts/UserActionsContext";
@@ -16,7 +16,11 @@ type VerticalListProps = {
   canShowLoading?: boolean;
   activeIndex: number;
   selectedIndex: number;
-  onUserAction: (id: string, action: userActions, payload?: string) => void;
+  onUserAction: (
+    id: string,
+    action: userActions,
+    payload?: string,
+  ) => void | Promise<void>;
 };
 export default function VerticalList({
   activeList,
@@ -28,14 +32,12 @@ export default function VerticalList({
 }: VerticalListProps) {
   const { LSLoading, LSError } = useAppContext();
   const { getPlaylistSize } = usePlaylistsContext();
-  const [isLoading, setIsLoading] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const listItemsRef = useRef<{ [key: string]: HTMLAnchorElement }>({});
   const itemAdded = useRef(false);
   const { t } = useTranslation();
 
   useEffect(() => {
-    setIsLoading(false);
     if (!itemAdded.current) return;
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
     itemAdded.current = false;
@@ -58,9 +60,7 @@ export default function VerticalList({
       {/* Toolbar to add new items or sort list */}
       <ListToolbar
         onItemAdded={() => (itemAdded.current = true)}
-        onUserAction={onUserAction}
-        isLoading={isLoading}
-        onLoading={() => setIsLoading(true)}
+        onUserAction={onUserAction as (...args: any[]) => Promise<void>}
       />
       {/* Bootstrap vertical list */}
       <BS_ListGroup

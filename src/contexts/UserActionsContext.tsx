@@ -29,7 +29,7 @@ type contextValueType = {
     id: string,
     action: userActions,
     payload?: string,
-  ) => void;
+  ) => Promise<void>;
   exportActiveToFile: () => void;
   exportAllToFile: () => void;
   importFromFile: (fileText: string) => void;
@@ -79,7 +79,7 @@ export default ({ children }: { children: ReactNode }) => {
   } = useActivePlaylistContext();
   const { videoState, playPause } = useVideoPlayerContext();
 
-  function handleUserActions(
+  async function handleUserActions(
     listType: ListType,
     id: string,
     action: userActions,
@@ -87,7 +87,8 @@ export default ({ children }: { children: ReactNode }) => {
   ) {
     if (listType === "playlist")
       handleUserActionsForPlaylist(id, action, payload);
-    if (listType === "video") handleUserActionsForVideo(id, action, payload);
+    if (listType === "video")
+      await handleUserActionsForVideo(id, action, payload);
   }
 
   function handleUserActionsForPlaylist(
@@ -171,7 +172,7 @@ export default ({ children }: { children: ReactNode }) => {
     }
   }
 
-  function handleUserActionsForVideo(
+  async function handleUserActionsForVideo(
     id: string,
     action: userActions,
     payload?: string,
@@ -217,12 +218,12 @@ export default ({ children }: { children: ReactNode }) => {
       case "add":
         {
           if (!payload) return;
-          handleNewURL(payload);
+          await handleNewURL(payload);
         }
         break;
       case "edit":
         {
-          if (payload) editVideo(id, payload);
+          if (payload) await editVideo(id, payload);
         }
         break;
       case "delete":
@@ -267,8 +268,9 @@ export default ({ children }: { children: ReactNode }) => {
           pageTokenParam = YTResponse.nextPageToken
             ? "&pageToken=" + YTResponse.nextPageToken
             : "";
-          urls.forEach((url) =>
-            addNewVideo("https://www.youtube.com/watch?v=" + url),
+          urls.forEach(
+            async (url) =>
+              await addNewVideo("https://www.youtube.com/watch?v=" + url),
           );
         } while (pageTokenParam !== "");
       } catch (error) {
@@ -280,7 +282,7 @@ export default ({ children }: { children: ReactNode }) => {
           if (key !== "v") _url.searchParams.delete(key);
         }
 
-        addNewVideo(_url.toString());
+        await addNewVideo(_url.toString());
       }
       // if not a Youtube playlist
     } else {
@@ -310,7 +312,7 @@ export default ({ children }: { children: ReactNode }) => {
         urlToAdd = "https://www.youtube.com/watch?v=" + videoId;
       }
 
-      addNewVideo(urlToAdd);
+      await addNewVideo(urlToAdd);
     }
   }
 

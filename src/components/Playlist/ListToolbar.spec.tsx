@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, within } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  within,
+} from "@testing-library/react";
 
 import ListToolbar from "./ListToolbar";
 import "@/i18next/i18next.ts";
@@ -9,22 +15,15 @@ describe("ListToolbar", () => {
   let toolbarElement: HTMLElement;
   let itemAddedSpy = vi.fn();
   let userActionSpy = vi.fn();
-  let loadingSpy = vi.fn();
 
   const componentToTest = (
-    <ListToolbar
-      onItemAdded={itemAddedSpy}
-      onUserAction={userActionSpy}
-      isLoading={false}
-      onLoading={loadingSpy}
-    />
+    <ListToolbar onItemAdded={itemAddedSpy} onUserAction={userActionSpy} />
   );
 
   beforeEach(() => {
     cleanup();
     itemAddedSpy.mockClear();
     userActionSpy.mockClear();
-    loadingSpy.mockClear();
 
     ({ container: rootElement } = render(componentToTest));
 
@@ -47,12 +46,12 @@ describe("ListToolbar", () => {
     expect(userActionSpy).toHaveBeenCalledWith("", "add", "New Fake Item");
   });
 
-  it("should clear input field after new item has been added", () => {
+  it("should clear input field after new item has been added", async () => {
     const input = within(toolbarElement).getByRole<HTMLInputElement>("textbox");
     const addButton = within(toolbarElement).getAllByRole("button")[0];
 
     fireEvent.input(input, { target: { value: "New Fake Item" } });
-    fireEvent.click(addButton);
+    await act(() => fireEvent.click(addButton));
 
     expect(input.value).toBe("");
   });
