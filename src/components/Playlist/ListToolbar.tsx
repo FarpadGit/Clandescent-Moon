@@ -36,7 +36,6 @@ export default function ListToolbar({
 
   function sortList() {
     if (!selectedAction) return;
-    onLoading();
     onUserAction("", selectedAction);
   }
 
